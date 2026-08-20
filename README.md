@@ -1,36 +1,149 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NCM Advogados — site institucional
 
-## Getting Started
+Next.js (App Router) + TypeScript + Tailwind. Substitui o WordPress atual. Sem CMS, sem banco
+próprio — o único ponto dinâmico é `app/api/lead/route.ts`, que repassa leads ao serviço `lexia`
+já existente na VPS.
 
-First, run the development server:
+## Rodando localmente
 
 ```bash
+npm install
+cp .env.example .env.local   # preencher LEXIA_SECRET etc.
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## O que está pronto
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Estrutura completa do App Router: home, `/sobre`, `/servicos`, `/servicos/[slug]` (6 áreas),
+  `/blog` + `/blog/[slug]` (MDX lido do disco no build), `/privacidade`.
+- `app/api/lead/route.ts` — valida com zod, aplica honeypot, rate limit (5/10min em memória) e
+  repassa ao Lexia com `x-ncm-secret`, com timeout de 3s e fallback `{ protocolo: null }`.
+- `components/FormularioLead.tsx` — 4 campos, máscara de telefone, ordem de envio que abre o
+  WhatsApp mesmo se a API falhar (nunca perde lead).
+- `components/AvisoCookies.tsx` — Aceitar/Recusar/Escolher, foco gerenciado, ESC, reabre via
+  qualquer elemento com `data-ncm-cookies`.
+- `lib/atribuicao.ts` / `lib/consentimento.ts` — captura de `gclid`/`gbraid`/`wbraid`/`msclkid`/
+  `fbclid` + UTMs na entrada da página, `localStorage` (`ncm_attr`, 90 dias, `ncm_consent`, versão
+  1) — mesmas chaves usadas por `public/lp/inventario.html`.
+- Consent Mode v2 (default denied) em `app/layout.tsx`, `url_passthrough` e `ads_data_redaction`
+  ativos, tag `AW-16878828348`.
+- `public/lp/inventario.html` — o arquivo pronto fornecido, copiado sem alterações (só recebeu
+  `<meta name="robots" content="noindex, follow">`), servido em `/inventario` via `rewrites()` em
+  `next.config.ts` (preserva query string — testado com `?gclid=TESTE123`).
+- `next.config.ts` — sem `output: 'export'`; mapa de redirects 301 com 3 entradas.
+- `sitemap.ts`, `robots.ts`, JSON-LD `LegalService` no layout, `Article`+`BreadcrumbList` nos
+  posts.
+- Zero "especialista"/superlativos/promessas de resultado no conteúdo novo — ver seção
+  "Conformidade" abaixo.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Build (`npm run build`) e lint (`npm run lint`) passam limpos. Testado manualmente no browser:
+formulário → API → WhatsApp, rewrite de `/inventario` preservando `gclid`, aviso de cookies
+(Aceitar/Recusar/Escolher, reabertura pelo rodapé), rate limit, honeypot.
 
-## Learn More
+## O que NÃO foi feito (fora do alcance deste ambiente)
 
-To learn more about Next.js, take a look at the following resources:
+Não tenho acesso à VPS, ao EasyPanel nem ao DNS do domínio — essas etapas exigem execução manual:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Identidade do escritório** — resolvida a partir dos próprios arquivos de referência (a LP de
+   inventário já traz a identificação completa): razão social **Leandro Nunes Sociedade
+   Individual de Advocacia** (OAB/SP 46.570), sócios **Leandro Nunes** (OAB/SP 338.331) e
+   **Leonardo da Costa Almeida Collares Miguel** (OAB/SP 523.685). Os arquivos de Home e Holding
+   traziam variações ("Leonardo Collares Advocacia") que foram descartadas em favor da LP, mais
+   recente e mais completa — vale uma conferência rápida antes de publicar.
+2. **`/privacidade`** — redigida a partir do briefing e do conteúdo já publicado, mas carrega um
+   aviso no topo do arquivo (`app/privacidade/page.tsx`) pedindo revisão da ética do escritório
+   antes de publicar, como pedido na tarefa.
+3. **Páginas de serviço sem conteúdo de origem** — `condominial`, `locacao` e `due-diligence` (ver
+   `lib/servicos.ts`) foram escritas com base nas descrições curtas da home, sem citação de artigo
+   de lei específico (ao contrário de `inventario`, `regularizacao-imobiliaria` e `holding`, que
+   vieram de páginas reais e citam a legislação). Revisar com um dos sócios antes de publicar.
+4. **`ncm-tag-consentimento.html`** — a tarefa cita esse arquivo como implementação já validada de
+   Consent Mode/atribuição a portar, mas ele não foi anexado (só a LP de inventário e páginas do
+   WordPress atual). O Consent Mode em `app/layout.tsx` foi implementado a partir da descrição
+   textual da tarefa (seção 3) — vale comparar com o arquivo original, se ele existir em algum
+   outro lugar, antes de publicar.
+5. **Imagens** — nenhuma foto foi fornecida com direito de uso claro (as páginas do WordPress
+   referenciam um CDN externo; a LP embute imagens em base64 já licenciadas para aquela página
+   específica). As páginas novas não usam `<Image>` ainda porque não há asset para colocar nela.
+6. **Ajuste no serviço `lexia`** — pedido na seção 2 (aceitar `x-ncm-secret` como autenticação
+   alternativa nessa rota, mantendo NextAuth pro resto) é mudança no código de outro serviço, que
+   não está neste repositório.
+7. **Deploy no EasyPanel, DNS, exportação do WordPress e verificação do Search Console** — exigem
+   acesso a sistemas que não tenho neste ambiente. Passo a passo abaixo.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Passo a passo para deploy (a ser executado por quem tem acesso à VPS)
 
-## Deploy on Vercel
+### 1. Antes de tocar em DNS
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Exportar o WordPress: Ferramentas → Exportar (XML completo) + pasta `wp-content/uploads`.
+- Search Console → Páginas → lista de URLs válidas (para conferir o mapa de redirects abaixo).
+- Trocar a verificação do Search Console de tag do WordPress para verificação por DNS.
+- No WordPress ainda no ar: remover o snippet do GTM (`GTM-WJ7QQM9L`) e desativar o PixelYourSite
+  (ele força `ad_storage: granted`, anulando qualquer consentimento).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 2. Ajustar o mapa de redirects
+
+`next.config.ts` já tem 3 entradas, **inferidas pelo título das páginas exportadas** — confirme
+cada uma contra a lista real do Search Console antes de publicar:
+
+```
+/regularizacao-de-imoveis/  → /servicos/regularizacao-imobiliaria
+/usucapiao/                 → /servicos/regularizacao-imobiliaria
+/holding/                   → /servicos/holding
+```
+
+### 3. Serviço `lexia`
+
+- Adicionar suporte a `x-ncm-secret` na rota `/api/lead`, mantendo NextAuth para o resto.
+- Adicionar a env var `LEXIA_SECRET` com o mesmo valor que será usado no serviço `site`.
+- Remover o domínio `ncm.adv.br/api/lead`, se estiver cadastrado nesse serviço — quem passa a
+  atender é o `site`.
+
+### 4. Serviço `site` no EasyPanel
+
+Projeto `ncm`, App via repositório Git, Nixpacks. Variáveis (ver `.env.example`):
+
+```
+NODE_ENV=production
+TZ=America/Sao_Paulo          ← não é opcional, container nasce em UTC
+PORT=3000
+LEXIA_URL=http://lexia:3000
+LEXIA_SECRET=<mesmo valor do lexia>
+NEXT_PUBLIC_SITE_URL=https://ncm.adv.br
+NEXT_PUBLIC_GADS_TAG=AW-16878828348
+NEXT_PUBLIC_GADS_CONVERSION=
+NEXT_PUBLIC_WHATSAPP=5511910144241
+```
+
+Domains: `ncm.adv.br` → `/` → porta 3000, HTTPS. `www.ncm.adv.br` → redirect para o apex,
+preservando a query string (configuração de domínio do EasyPanel, não do Next — evita qualquer
+lógica de host em middleware que arrisque derrubar o `gclid`).
+
+Atenção: builds simultâneos com `lexia` podem estourar OOM em VPS de 4GB — publique um serviço de
+cada vez.
+
+### 5. Teste de aceitação (seção 11 da tarefa original)
+
+```bash
+curl -sI "https://www.ncm.adv.br/?gclid=TESTE123" | grep -i location
+curl -sI "http://ncm.adv.br/?gclid=TESTE123" | grep -i location
+curl -s -o /dev/null -w '%{http_code}\n' "https://ncm.adv.br/inventario?gclid=TESTE123"
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://ncm.adv.br/api/lead -H 'Content-Type: application/json' -d '{}'
+curl -s -o /dev/null -w '%{http_code}\n' -X POST https://lexia.ncm.adv.br/api/lead -H 'Content-Type: application/json' -d '{}'
+curl -sI --max-time 5 http://SEU_IP:3000 | head -1
+```
+
+Depois, no navegador: preencher o formulário e conferir a linha gravada no Postgres com o
+`gclid`. Se o `gclid` não estiver lá, nada mais importa.
+
+## Conformidade — Provimento 205/2021
+
+Nenhuma ocorrência de "especialista", "especializad-", "líder", "referência", "recomendado",
+superlativos sobre o escritório, promessa de resultado, valor ou urgência artificial no conteúdo
+escrito para este projeto (`app/`, `lib/servicos.ts`, `content/posts/`). O rodapé
+(`components/Rodape.tsx`) traz a OAB dos dois sócios e da sociedade em todas as páginas.
+
+**Atenção**: as páginas de campanha antigas usadas como fonte de conteúdo bruto (Holding,
+Regularização, Usucapião — arquivos `.htm` anexados à tarefa) usam "especialista" e superlativos
+extensivamente. Isso **não** foi copiado para o site novo — mas se alguém revisar o conteúdo
+comparando com essas páginas de origem, é esperado ver a diferença de tom.
