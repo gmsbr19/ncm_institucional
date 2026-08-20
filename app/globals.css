@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --cor-marinho-profundo: #020d25;
+  --cor-marinho-medio: #1c2b3d;
+  --cor-dourado: #c0a147;
+  --cor-branco: #ffffff;
+  --cor-off-white: #f3f1ec;
+  --cor-cinza-escuro-txt: #c2c2c2;
+  --cor-cinza-linha: #d2d3d5;
+  --cor-cinza-claro-txt: #6c6b7d;
+  --cor-whatsapp: #40c92b;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-marinho-profundo: var(--cor-marinho-profundo);
+  --color-marinho-medio: var(--cor-marinho-medio);
+  --color-dourado: var(--cor-dourado);
+  --color-off-white: var(--cor-off-white);
+  --color-cinza-escuro-txt: var(--cor-cinza-escuro-txt);
+  --color-cinza-linha: var(--cor-cinza-linha);
+  --color-cinza-claro-txt: var(--cor-cinza-claro-txt);
+  --color-whatsapp: var(--cor-whatsapp);
+
+  --font-corpo: var(--font-poppins), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-titulo: var(--font-newsreader), Georgia, serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--cor-off-white);
+  color: var(--cor-marinho-profundo);
+  font-family: var(--font-corpo);
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.rotulo {
+  font-family: var(--font-corpo);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2.7px;
+  color: var(--cor-dourado);
+  font-size: 13px;
+}
+
+.gesto-marca {
+  border-radius: 0 150px 0 150px;
+}
+
+.sombra-difusa {
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
 }
