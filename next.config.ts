@@ -15,27 +15,29 @@ const nextConfig: NextConfig = {
   },
 
   async redirects() {
+    // Origens conferidas contra o sitemap real do WordPress
+    // (ncm.adv.br/page-sitemap.xml, lido em 21/08/2026) — não são suposições.
+    //
+    // Ficaram de fora de propósito, por não terem equivalente no site novo:
+    // /assessoria-empresarial/, /leilao/ e /distrato-por-atraso-de-obra-nova/.
+    // O briefing manda deixar cair no 404 em vez de mandar para a home, que o
+    // Google trata como soft-404. Também ficaram de fora as páginas internas
+    // do WordPress (/redirecionando-*, /*-antiga/, /author/, /category/).
+    // As origens vão SEM barra final, mesmo que as URLs do WordPress tenham.
+    // O Next normaliza a barra antes de avaliar estes redirects (trailingSlash
+    // é false por padrão), então uma origem escrita como "/foo/" nunca casa —
+    // a requisição já chega aqui como "/foo". Escrito com barra, o mapa inteiro
+    // caía em 404 silenciosamente.
     return [
-      // Mapa de 301 enxuto: só URLs com link externo ou digitadas.
-      // TODO — confirmar cada slug de origem contra o Google Search Console
-      // (Páginas → lista de URLs válidas) antes do corte de DNS. Os slugs
-      // abaixo foram inferidos pelos títulos das páginas exportadas do
-      // WordPress e podem não bater com a URL real.
-      {
-        source: '/regularizacao-de-imoveis/',
-        destination: '/servicos/regularizacao-imobiliaria',
-        permanent: true,
-      },
-      {
-        source: '/usucapiao/',
-        destination: '/servicos/regularizacao-imobiliaria',
-        permanent: true,
-      },
-      {
-        source: '/holding/',
-        destination: '/servicos/holding',
-        permanent: true,
-      },
+      { source: '/regularizacao-de-imoveis', destination: '/servicos/regularizacao-imobiliaria', permanent: true },
+      { source: '/usucapiao', destination: '/servicos/regularizacao-imobiliaria', permanent: true },
+      { source: '/holding', destination: '/servicos/holding', permanent: true },
+      { source: '/assessoria-patrimonial', destination: '/servicos/holding', permanent: true },
+      { source: '/condominial', destination: '/servicos/condominial', permanent: true },
+      { source: '/despejo', destination: '/servicos/locacao', permanent: true },
+      // Página de área ampla ("Direito Imobiliário"): o equivalente honesto é o
+      // índice de áreas, não uma página de serviço específica.
+      { source: '/imobiliario', destination: '/servicos', permanent: true },
     ];
   },
 };
