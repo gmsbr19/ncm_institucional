@@ -15,8 +15,16 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import nextEnv from '@next/env'; // CommonJS — só exporta pelo default
 
 const RAIZ = path.join(import.meta.dirname, '..');
+
+// Este script roda no prebuild, ANTES do next build, então não herda o
+// carregamento de .env que o Next faz por conta própria. Sem isso, um build
+// local sairia com NEXT_PUBLIC_GADS_TAG vazio e a home iria ao ar sem gtag —
+// silenciosamente, porque a página continua abrindo normal. Usamos o mesmo
+// carregador do Next para valer a mesma precedência de arquivos.
+nextEnv.loadEnvConfig(RAIZ, /* dev */ false, { info: () => {}, error: console.error });
 
 const EXTENSAO_POR_MIME = {
   'image/png': 'png',
