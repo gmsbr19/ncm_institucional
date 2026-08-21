@@ -33,6 +33,7 @@ Zona como está hoje:
 | A | `ncm.adv.br` | `107.150.167.175` |
 | CNAME | `www` | `ncm.adv.br` |
 | A | `lexia` | `158.173.2.167` |
+| A | `painel` | `158.173.2.167` (painel do EasyPanel) |
 | MX | `ncm.adv.br` | `ncm-adv-br.mail.protection.outlook.com` (prio 1) |
 | TXT | `ncm.adv.br` | `v=spf1 ip4:107.150.167.175 include:spf.protection.outlook.com -all` |
 | TXT | `_dmarc` | `v=DMARC1; p=none;` |
@@ -62,9 +63,27 @@ Coisas que se perdem para sempre se pular:
 1. [ ] Criar conta na Cloudflare, "Add a site" → `ncm.adv.br` → plano Free. Ela varre a zona atual
        e importa o que consegue.
 2. [ ] **Conferir registro por registro** contra o zone file exportado na Fase 0. A importação
-       automática costuma perder registros. Precisam existir, no mínimo, os oito da tabela acima.
-3. [ ] Deixar **tudo em "DNS only" (nuvem cinza)**, não proxiado. O proxy da Cloudflare interfere
-       na emissão do certificado Let's Encrypt do EasyPanel, e é uma variável a menos no corte.
+       automática perde registros — na primeira tentativa, em 21/08/2026, ela achou 9 A, 3 CNAME,
+       1 MX, 3 SRV e 8 TXT, e **não trouxe nenhum dos dois subdomínios que apontam para a VPS**:
+
+   | Tipo | Nome | Valor |
+   |---|---|---|
+   | A | `lexia` | `158.173.2.167` |
+   | A | `painel` | `158.173.2.167` |
+
+   Sem eles, trocar os nameservers derruba o sistema de leads e o painel do EasyPanel. A
+   transferência de zona (AXFR) é recusada pelo servidor da TurboCloud, então sondagem externa
+   nunca é prova de completude — o export do cPanel é a única fonte confiável.
+
+3. [ ] Deixar **tudo em "DNS only" (nuvem cinza)**, não proxiado. A Cloudflare marca A e CNAME
+       como *Proxied* por padrão, e aqui isso quebra coisas:
+
+   - `autodiscover` proxiado quebra a configuração automática do Outlook — a Microsoft exige
+     DNS only;
+   - `mail` proxiado quebra IMAP/SMTP, que não são HTTP;
+   - `cpanel`, `whm`, `webmail`, `webdisk`, `ftp`, `cpcalendars`, `cpcontacts` e `autoconfig`
+     usam portas não-HTTP (2083, 2087, 2078, 21, 2079, 2080) e param de responder;
+   - apex e `www` proxiados atrapalham a emissão do certificado do EasyPanel na Fase 3.
 4. [ ] **Não mexer no registro A ainda.** Ele continua apontando para `107.150.167.175`. A troca de
        nameserver precisa ser invisível.
 5. [ ] No **Registro.br**, trocar os nameservers para os dois que a Cloudflare indicar.
@@ -111,6 +130,18 @@ Espere alguns dias com tudo funcionando antes desta fase.
        `v=spf1 include:spf.protection.outlook.com -all`
 2. [ ] Voltar o TTL para 3600s.
 3. [ ] **Só agora cancelar o plano da TurboCloud.**
+4. [ ] **Apagar os registros órfãos do cPanel.** Depois do cancelamento, todo A apontando para
+       `107.150.167.175` vira *dangling DNS*: o IP passa a ser de outro cliente daquele servidor
+       compartilhado, que poderia servir conteúdo em `webmail.ncm.adv.br` e afins.
+
+   Apagar: `autoconfig`, `cpanel`, `cpcalendars`, `cpcontacts`, `ftp`, `webdisk`, `webmail`,
+   `whm`, o CNAME `mail`, os três SRV (`_autodiscover._tcp`, `_caldav._tcp`, `_carddav._tcp`) e
+   os TXT `_caldav*`, `_carddav*`, `_cpanel-dcv` e `_acme-challenge`.
+
+   Manter: apex, `www`, `lexia`, `painel`, MX, SPF, `_dmarc` e o CNAME `autodiscover`.
+
+   Vale notar que o SRV `_autodiscover._tcp` aponta para o cPanel, não para a Microsoft. Removê-lo
+   ajuda o Outlook a achar o M365 pelo CNAME correto.
 
 ## Teste de aceitação
 
