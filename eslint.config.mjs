@@ -12,6 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Assets servidos como estão: bundles gerados pela ferramenta de design,
+    // a LP entregue pronta e a tag em JS puro das páginas estáticas. Nada aqui
+    // passa pelo pipeline de build do Next, então as regras de React/TS não se
+    // aplicam.
+    "public/**",
+    // Exportações originais do design — fonte para scripts/montar-paginas-design.mjs.
+    "design/**",
   ]),
 ]);
 
