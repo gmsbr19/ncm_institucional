@@ -63,14 +63,30 @@ const AJUSTES = [
 ];
 
 const PAGINAS = [
-  { origem: 'design/home.html', saida: 'public/home.html', assets: 'home' },
+  { origem: 'design/home.html', saida: 'public/home.html', assets: 'home', canonical: '/' },
   {
     origem: 'design/inventario.html',
     saida: 'public/lp/inventario.html',
     assets: 'inventario',
+    canonical: '/inventario',
     ajustes: AJUSTES_LP_INVENTARIO,
   },
 ];
+
+/**
+ * As páginas do App Router declaram canonical via metadata.alternates. As
+ * estáticas não passam por lá e ficavam sem nenhuma — o que importa porque o
+ * site responde tanto no apex quanto em www, servindo bytes idênticos. Sem
+ * canonical, é conteúdo duplicado sem indicação de qual URL é a original.
+ */
+function injetarCanonical(html, caminho) {
+  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ncm.adv.br').replace(/\/$/, '');
+  const tag = `<link rel="canonical" href="${base}${caminho}">\n`;
+
+  const fimHead = html.indexOf('</head>');
+  if (fimHead === -1) throw new Error('não achei </head> para injetar o canonical.');
+  return html.slice(0, fimHead) + tag + html.slice(fimHead);
+}
 
 /**
  * Ajustes de uma página específica. Diferente de AJUSTES (que é lista de pares
@@ -223,6 +239,7 @@ for (const pagina of PAGINAS) {
   saida = aplicarAjustes(saida);
   if (pagina.ajustes) saida = aplicarAjustesDaPagina(saida, pagina.ajustes, pagina.origem);
   saida = injetarTag(saida);
+  if (pagina.canonical) saida = injetarCanonical(saida, pagina.canonical);
 
   fs.mkdirSync(path.dirname(path.join(RAIZ, pagina.saida)), { recursive: true });
   fs.writeFileSync(path.join(RAIZ, pagina.saida), saida, 'utf8');
