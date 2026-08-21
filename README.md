@@ -14,8 +14,13 @@ npm run dev
 
 ## O que está pronto
 
-- Estrutura completa do App Router: home, `/sobre`, `/servicos`, `/servicos/[slug]` (6 áreas),
-  `/blog` + `/blog/[slug]` (MDX lido do disco no build), `/privacidade`.
+- **Home (`/`) é o design original servido como estático**, não uma reescrita em React. O arquivo
+  exportado da ferramenta de design está em `design/home.html`; `scripts/montar-paginas-design.mjs`
+  desempacota os 28 assets embutidos (4 imagens, 21 fontes, 3 bundles JS) para
+  `public/assets/home/`, reescreve as referências e grava `public/home.html`, servido em `/` por
+  rewrite `beforeFiles`. Ver "Páginas de design" abaixo.
+- App Router para o resto: `/sobre`, `/servicos`, `/servicos/[slug]` (6 áreas), `/blog` +
+  `/blog/[slug]` (MDX lido do disco no build), `/privacidade`.
 - `app/api/lead/route.ts` — valida com zod, aplica honeypot, rate limit (5/10min em memória) e
   repassa ao Lexia com `x-ncm-secret`, com timeout de 3s e fallback `{ protocolo: null }`.
 - `components/FormularioLead.tsx` — 4 campos, máscara de telefone, ordem de envio que abre o
@@ -27,6 +32,10 @@ npm run dev
   1) — mesmas chaves usadas por `public/lp/inventario.html`.
 - Consent Mode v2 (default denied) em `app/layout.tsx`, `url_passthrough` e `ads_data_redaction`
   ativos, tag `AW-16878828348`.
+- `public/assets/ncm-tag.js` — mesma coisa em JS puro para as páginas **estáticas**, que não
+  passam pelo layout do Next: Consent Mode, gtag/js, captura de atribuição e aviso de cookies,
+  usando as mesmas chaves (`ncm_attr`, `ncm_consent` v1). Injetado no `<head>` antes de qualquer
+  outro script pelo `scripts/montar-paginas-design.mjs`, com a config vinda das env vars do build.
 - `public/lp/inventario.html` — o arquivo pronto fornecido, copiado sem alterações (só recebeu
   `<meta name="robots" content="noindex, follow">`), servido em `/inventario` via `rewrites()` em
   `next.config.ts` (preserva query string — testado com `?gclid=TESTE123`).
@@ -39,6 +48,31 @@ npm run dev
 Build (`npm run build`) e lint (`npm run lint`) passam limpos. Testado manualmente no browser:
 formulário → API → WhatsApp, rewrite de `/inventario` preservando `gclid`, aviso de cookies
 (Aceitar/Recusar/Escolher, reabertura pelo rodapé), rate limit, honeypot.
+
+Cadeia de atribuição verificada ponta a ponta no navegador, que é o cenário crítico do projeto:
+entrada em `/?gclid=TESTE123&utm_source=google&utm_medium=cpc` → gravado em `ncm_attr` pela tag da
+home estática → navegação até `/servicos/holding` (página do Next, sem query string) → `gclid`
+ainda presente → envio do formulário com `atribuicao.gclid = "TESTE123"` e `pagina_entrada: "/"`
+no corpo do POST para `/api/lead`.
+
+## Páginas de design
+
+Páginas exportadas da ferramenta de design ficam em `design/` e são montadas por
+`scripts/montar-paginas-design.mjs` (roda automaticamente no `prebuild`; avulso via
+`npm run montar:paginas`). O script:
+
+1. desempacota o `__bundler/manifest` em arquivos reais sob `public/assets/<pagina>/` e reescreve
+   as referências de uuid do HTML — a página sai de 1,5 MB para ~51 KB, com os assets cacheáveis
+   separadamente e o conteúdo já no HTML inicial (crawler não depende de JS);
+2. aplica a lista `AJUSTES`, que hoje cobre os termos vedados pelo Provimento 205/2021
+   ("especialista"/"especialização") e a troca do número de WhatsApp antigo pelo oficial do
+   projeto. **É por isso que o script existe**: se o design for reexportado, esses ajustes são
+   reaplicados em vez de se perderem. Se um trecho de `AJUSTES` deixar de existir no HTML, o
+   script avisa no console em vez de falhar em silêncio;
+3. injeta `public/assets/ncm-tag.js` no `<head>`, antes de qualquer outro script.
+
+Para atualizar a home: substitua `design/home.html` pela nova exportação e rode
+`npm run montar:paginas`. Confira os avisos no console.
 
 ## O que NÃO foi feito (fora do alcance deste ambiente)
 
@@ -62,13 +96,20 @@ Não tenho acesso à VPS, ao EasyPanel nem ao DNS do domínio — essas etapas e
    WordPress atual). O Consent Mode em `app/layout.tsx` foi implementado a partir da descrição
    textual da tarefa (seção 3) — vale comparar com o arquivo original, se ele existir em algum
    outro lugar, antes de publicar.
-5. **Imagens** — nenhuma foto foi fornecida com direito de uso claro (as páginas do WordPress
-   referenciam um CDN externo; a LP embute imagens em base64 já licenciadas para aquela página
-   específica). As páginas novas não usam `<Image>` ainda porque não há asset para colocar nela.
-6. **Ajuste no serviço `lexia`** — pedido na seção 2 (aceitar `x-ncm-secret` como autenticação
+5. **Imagens nas páginas internas** — a home e a LP usam as imagens originais dos próprios
+   arquivos de design. Já `/sobre`, `/servicos/*` e `/blog/*` não têm imagem nenhuma: não houve
+   asset fornecido para elas (as três páginas do WordPress trazem as suas embutidas em data URI,
+   mas são de outro layout). Se quiser imagens nessas páginas, precisamos definir a origem.
+6. **A LP `/inventario` continua sem a tag** — `public/assets/ncm-tag.js` foi injetado na home,
+   mas não na LP, porque o briefing foi explícito sobre ela ("arquivo pronto, não mexer"). Só que
+   o arquivo entregue não tem Consent Mode, gtag nem captura de `gclid` — ou seja, quem cai
+   direto num anúncio apontando para `/inventario` hoje não tem a atribuição gravada. O conserto
+   é de uma linha (incluir a LP em `PAGINAS` no script), mas depende da sua autorização para
+   tocar no arquivo.
+7. **Ajuste no serviço `lexia`** — pedido na seção 2 (aceitar `x-ncm-secret` como autenticação
    alternativa nessa rota, mantendo NextAuth pro resto) é mudança no código de outro serviço, que
    não está neste repositório.
-7. **Deploy no EasyPanel, DNS, exportação do WordPress e verificação do Search Console** — exigem
+8. **Deploy no EasyPanel, DNS, exportação do WordPress e verificação do Search Console** — exigem
    acesso a sistemas que não tenho neste ambiente. Passo a passo abaixo.
 
 ## Passo a passo para deploy (a ser executado por quem tem acesso à VPS)
