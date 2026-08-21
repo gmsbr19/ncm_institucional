@@ -31,24 +31,27 @@ const HANDLER_NOVO = `var triagem = {
     if (botao) { botao.disabled = true; botao.textContent = "Enviando\\u2026"; }
 
     var done = false;
-    function go(protocolo) {
+    function go() {
       if (done) return;
       done = true;
       if (botao) { botao.disabled = false; botao.textContent = rotulo; }
 
+      // Sem número de protocolo: quem envia esta mensagem é a própria pessoa,
+      // e um código no meio do texto soa burocrático para quem está do outro
+      // lado. A ligação com o registro no Lexia se faz pelo telefone, que já
+      // vai no corpo do lead e é o mesmo número de onde a mensagem chega.
       var msg = "Olá. Vim pelo site, pela página sobre inventário.\\n\\n" +
         "Nome: " + nome.value.trim() + "\\n" +
         "WhatsApp: " + tel.value + "\\n" +
         "Falecimento: " + obito.value + "\\n" +
-        "Acordo entre herdeiros: " + acordo.value +
-        (protocolo ? "\\n\\nProtocolo: " + protocolo : "");
+        "Acordo entre herdeiros: " + acordo.value;
 
       var url = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg);
       if (aba && !aba.closed) { aba.location.href = url; } else { window.location.href = url; }
     }
 
     // Falha de rede nunca pode segurar o lead: solta o usuário de qualquer jeito.
-    var seguranca = setTimeout(function () { go(null); }, 4500);
+    var seguranca = setTimeout(go, 4500);
 
     var ctrl = typeof AbortController === "function" ? new AbortController() : null;
     var expirou = setTimeout(function () { if (ctrl) ctrl.abort(); }, 3500);
@@ -73,13 +76,13 @@ const HANDLER_NOVO = `var triagem = {
       return r.ok ? r.json() : null;
     })["catch"](function () {
       return null;
-    }).then(function (dados) {
+    }).then(function () {
       clearTimeout(expirou);
       clearTimeout(seguranca);
       if (CONFIG.conversionSendTo && typeof window.gtag === "function") {
         window.gtag("event", "conversion", { send_to: CONFIG.conversionSendTo });
       }
-      go(dados && dados.protocolo ? dados.protocolo : null);
+      go();
     });`;
 
 export const AJUSTES_LP_INVENTARIO = [
