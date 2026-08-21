@@ -51,6 +51,37 @@ const AJUSTES = [
 
 const PAGINAS = [{ origem: 'design/home.html', saida: 'public/home.html', assets: 'home' }];
 
+/**
+ * Páginas estáticas não passam pelo app/layout.tsx, então não recebem Consent
+ * Mode, gtag nem a captura de gclid. Sem isso, um visitante que chega pela home
+ * vindo de um anúncio perde a atribuição — que é a regra nº 0 do projeto.
+ * Injetamos aqui a versão em JS puro desse comportamento.
+ */
+function injetarTag(html) {
+  const config = {
+    gadsTag: process.env.NEXT_PUBLIC_GADS_TAG ?? '',
+    conversionSendTo: process.env.NEXT_PUBLIC_GADS_CONVERSION || null,
+  };
+
+  if (!config.gadsTag) {
+    console.warn('  AVISO: NEXT_PUBLIC_GADS_TAG vazio — a página sai sem gtag/js.');
+  }
+
+  const tag =
+    `<script>window.NCM_CONFIG=${JSON.stringify(config)};</script>\n` +
+    `<script src="/assets/ncm-tag.js"></script>\n`;
+
+  // Precisa vir antes de qualquer outro script: o Consent Mode registra os
+  // defaults como "denied" e só então carrega o gtag/js. Entra logo após as
+  // metatags (charset continua nos primeiros bytes) e antes do primeiro
+  // <script> do documento.
+  const primeiroScript = html.indexOf('<script');
+  const fimHead = html.indexOf('</head>');
+  if (fimHead === -1) throw new Error('não achei </head> para injetar a tag.');
+
+  const posicao = primeiroScript !== -1 && primeiroScript < fimHead ? primeiroScript : fimHead;
+  return html.slice(0, posicao) + tag + html.slice(posicao);
+}
 
 function desempacotar(arquivoOrigem) {
   const html = fs.readFileSync(path.join(RAIZ, arquivoOrigem), 'utf8');
@@ -127,6 +158,7 @@ for (const pagina of PAGINAS) {
   }
 
   saida = aplicarAjustes(saida);
+  saida = injetarTag(saida);
 
   fs.writeFileSync(path.join(RAIZ, pagina.saida), saida, 'utf8');
   console.log(`  ${(saida.length / 1024).toFixed(0)}KB -> ${pagina.saida}`);
