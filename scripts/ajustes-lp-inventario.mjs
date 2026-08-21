@@ -36,13 +36,13 @@ const HANDLER_NOVO = `var triagem = {
       done = true;
       if (botao) { botao.disabled = false; botao.textContent = rotulo; }
 
-      // Sem número de protocolo: quem envia esta mensagem é a própria pessoa,
-      // e um código no meio do texto soa burocrático para quem está do outro
-      // lado. A ligação com o registro no Lexia se faz pelo telefone, que já
-      // vai no corpo do lead e é o mesmo número de onde a mensagem chega.
+      // A mensagem carrega só o que o escritório não teria de outro jeito.
+      // Fora: o número de protocolo (código burocrático para quem está do outro
+      // lado) e o telefone (a mensagem chega justamente dele). Os dois seguem no
+      // corpo do lead para o Lexia, que é onde fazem falta — o telefone,
+      // inclusive, é o que casa a conversa com o registro.
       var msg = "Olá. Vim pelo site, pela página sobre inventário.\\n\\n" +
         "Nome: " + nome.value.trim() + "\\n" +
-        "WhatsApp: " + tel.value + "\\n" +
         "Falecimento: " + obito.value + "\\n" +
         "Acordo entre herdeiros: " + acordo.value;
 
