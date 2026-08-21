@@ -36,9 +36,10 @@ npm run dev
   passam pelo layout do Next: Consent Mode, gtag/js, captura de atribuição e aviso de cookies,
   usando as mesmas chaves (`ncm_attr`, `ncm_consent` v1). Injetado no `<head>` antes de qualquer
   outro script pelo `scripts/montar-paginas-design.mjs`, com a config vinda das env vars do build.
-- `public/lp/inventario.html` — o arquivo pronto fornecido, copiado sem alterações (só recebeu
-  `<meta name="robots" content="noindex, follow">`), servido em `/inventario` via `rewrites()` em
-  `next.config.ts` (preserva query string — testado com `?gclid=TESTE123`).
+- `/inventario` — a LP entregue pronta, montada pelo mesmo pipeline a partir de
+  `design/inventario.html`, servida por rewrite (preserva a query string). Os ajustes dela estão
+  isolados em `scripts/ajustes-lp-inventario.mjs`: `noindex`, config vinda do ambiente, honeypot
+  decidido pela API e — o principal — o envio do lead ao Lexia, que o arquivo original não fazia.
 - `next.config.ts` — sem `output: 'export'`; mapa de redirects 301 com 3 entradas.
 - `sitemap.ts`, `robots.ts`, JSON-LD `LegalService` no layout, `Article`+`BreadcrumbList` nos
   posts.
@@ -54,6 +55,11 @@ entrada em `/?gclid=TESTE123&utm_source=google&utm_medium=cpc` → gravado em `n
 home estática → navegação até `/servicos/holding` (página do Next, sem query string) → `gclid`
 ainda presente → envio do formulário com `atribuicao.gclid = "TESTE123"` e `pagina_entrada: "/"`
 no corpo do POST para `/api/lead`.
+
+O mesmo foi verificado entrando direto na LP:
+`/inventario?gclid=LP_TESTE_999&utm_source=google&utm_medium=cpc&utm_campaign=inventario-sp` →
+POST com `origem: "lp-inventario"`, o `gclid` e as UTMs completas. Com o Lexia devolvendo
+protocolo, ele aparece na mensagem do WhatsApp ("Protocolo: NCM-2026-0042").
 
 ## Páginas de design
 
@@ -100,16 +106,10 @@ Não tenho acesso à VPS, ao EasyPanel nem ao DNS do domínio — essas etapas e
    arquivos de design. Já `/sobre`, `/servicos/*` e `/blog/*` não têm imagem nenhuma: não houve
    asset fornecido para elas (as três páginas do WordPress trazem as suas embutidas em data URI,
    mas são de outro layout). Se quiser imagens nessas páginas, precisamos definir a origem.
-6. **A LP `/inventario` continua sem a tag** — `public/assets/ncm-tag.js` foi injetado na home,
-   mas não na LP, porque o briefing foi explícito sobre ela ("arquivo pronto, não mexer"). Só que
-   o arquivo entregue não tem Consent Mode, gtag nem captura de `gclid` — ou seja, quem cai
-   direto num anúncio apontando para `/inventario` hoje não tem a atribuição gravada. O conserto
-   é de uma linha (incluir a LP em `PAGINAS` no script), mas depende da sua autorização para
-   tocar no arquivo.
-7. **Ajuste no serviço `lexia`** — pedido na seção 2 (aceitar `x-ncm-secret` como autenticação
+6. **Ajuste no serviço `lexia`** — pedido na seção 2 (aceitar `x-ncm-secret` como autenticação
    alternativa nessa rota, mantendo NextAuth pro resto) é mudança no código de outro serviço, que
    não está neste repositório.
-8. **Deploy no EasyPanel, DNS, exportação do WordPress e verificação do Search Console** — exigem
+7. **Deploy no EasyPanel, DNS, exportação do WordPress e verificação do Search Console** — exigem
    acesso a sistemas que não tenho neste ambiente. Passo a passo abaixo.
 
 ## Passo a passo para deploy (a ser executado por quem tem acesso à VPS)

@@ -16,6 +16,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import nextEnv from '@next/env'; // CommonJS — só exporta pelo default
+import { AJUSTES_LP_INVENTARIO } from './ajustes-lp-inventario.mjs';
 
 const RAIZ = path.join(import.meta.dirname, '..');
 
@@ -57,7 +58,45 @@ const AJUSTES = [
   ['(11) 99308-2707', '(11) 91014-4241'],
 ];
 
-const PAGINAS = [{ origem: 'design/home.html', saida: 'public/home.html', assets: 'home' }];
+const PAGINAS = [
+  { origem: 'design/home.html', saida: 'public/home.html', assets: 'home' },
+  {
+    origem: 'design/inventario.html',
+    saida: 'public/lp/inventario.html',
+    assets: 'inventario',
+    ajustes: AJUSTES_LP_INVENTARIO,
+  },
+];
+
+/**
+ * Ajustes de uma página específica. Diferente de AJUSTES (que é lista de pares
+ * e só avisa quando não casa), estes são obrigatórios: se um deixar de casar, o
+ * build falha. São mudanças de comportamento, não de texto — passar batido
+ * significaria publicar uma página que não envia lead ou não tem noindex.
+ */
+function aplicarAjustesDaPagina(html, ajustes, origem) {
+  let resultado = html;
+
+  for (const ajuste of ajustes) {
+    if (ajuste.deInicio) {
+      const inicio = resultado.indexOf(ajuste.deInicio);
+      const fim = inicio === -1 ? -1 : resultado.indexOf(ajuste.deFimExclusivo, inicio);
+      if (inicio === -1 || fim === -1) {
+        throw new Error(`${origem}: ajuste "${ajuste.porque}" não encontrou o trecho de origem.`);
+      }
+      resultado = resultado.slice(0, inicio) + ajuste.para + resultado.slice(fim);
+      continue;
+    }
+
+    if (!resultado.includes(ajuste.de)) {
+      throw new Error(`${origem}: ajuste "${ajuste.porque}" não encontrou o trecho de origem.`);
+    }
+    resultado = resultado.replaceAll(ajuste.de, ajuste.para);
+  }
+
+  console.log(`  ${ajustes.length} ajuste(s) da página aplicados`);
+  return resultado;
+}
 
 /**
  * Páginas estáticas não passam pelo app/layout.tsx, então não recebem Consent
@@ -69,6 +108,8 @@ function injetarTag(html) {
   const config = {
     gadsTag: process.env.NEXT_PUBLIC_GADS_TAG ?? '',
     conversionSendTo: process.env.NEXT_PUBLIC_GADS_CONVERSION || null,
+    // Usado pelo formulário da LP, para o número não ficar fixo no arquivo.
+    whatsapp: process.env.NEXT_PUBLIC_WHATSAPP ?? '',
   };
 
   if (!config.gadsTag) {
@@ -107,6 +148,10 @@ function desempacotar(arquivoOrigem) {
 function gravarAssets(assets, pasta) {
   const destino = path.join(RAIZ, 'public', 'assets', pasta);
   fs.rmSync(destino, { recursive: true, force: true });
+
+  // A LP já traz tudo embutido em data: URI, então o manifest dela é vazio —
+  // não faz sentido criar a pasta.
+  if (Object.keys(assets).length === 0) return new Map();
   fs.mkdirSync(destino, { recursive: true });
 
   const caminhoPorUuid = new Map();
@@ -124,25 +169,29 @@ function gravarAssets(assets, pasta) {
   return caminhoPorUuid;
 }
 
+// Um ajuste comum que não casa numa página específica é normal — a LP nunca
+// teve os termos da home. O que importa é um ajuste que não casa em NENHUMA
+// página: isso significa que uma correção de conformidade parou de ser
+// aplicada e ninguém ficou sabendo.
+const ajustesJaAplicados = new Set();
+
 function aplicarAjustes(html) {
-  const naoAplicados = [];
   let resultado = html;
 
   for (const [de, para] of AJUSTES) {
-    if (!resultado.includes(de)) {
-      naoAplicados.push(de);
-      continue;
-    }
+    if (!resultado.includes(de)) continue;
     resultado = resultado.replaceAll(de, para);
-  }
-
-  if (naoAplicados.length > 0) {
-    // Não é erro fatal — o design pode ter mudado e o trecho já não existir. Mas
-    // precisa aparecer, senão um ajuste de conformidade some sem ninguém notar.
-    console.warn('  AVISO: ajustes sem correspondência no HTML (o design mudou?):');
-    for (const trecho of naoAplicados) console.warn(`    - ${JSON.stringify(trecho)}`);
+    ajustesJaAplicados.add(de);
   }
   return resultado;
+}
+
+function avisarAjustesNuncaAplicados() {
+  const orfaos = AJUSTES.filter(([de]) => !ajustesJaAplicados.has(de));
+  if (orfaos.length === 0) return;
+
+  console.warn('\nAVISO: ajustes que não casaram em nenhuma página (o design mudou?):');
+  for (const [de] of orfaos) console.warn(`  - ${JSON.stringify(de)}`);
 }
 
 for (const pagina of PAGINAS) {
@@ -150,7 +199,9 @@ for (const pagina of PAGINAS) {
 
   const { html, assets } = desempacotar(pagina.origem);
   const caminhoPorUuid = gravarAssets(assets, pagina.assets);
-  console.log(`  ${caminhoPorUuid.size} assets -> public/assets/${pagina.assets}/`);
+  if (caminhoPorUuid.size > 0) {
+    console.log(`  ${caminhoPorUuid.size} assets -> public/assets/${pagina.assets}/`);
+  }
 
   let saida = html;
   for (const [uuid, caminho] of caminhoPorUuid) {
@@ -166,10 +217,14 @@ for (const pagina of PAGINAS) {
   }
 
   saida = aplicarAjustes(saida);
+  if (pagina.ajustes) saida = aplicarAjustesDaPagina(saida, pagina.ajustes, pagina.origem);
   saida = injetarTag(saida);
 
+  fs.mkdirSync(path.dirname(path.join(RAIZ, pagina.saida)), { recursive: true });
   fs.writeFileSync(path.join(RAIZ, pagina.saida), saida, 'utf8');
   console.log(`  ${(saida.length / 1024).toFixed(0)}KB -> ${pagina.saida}`);
 }
+
+avisarAjustesNuncaAplicados();
 
 console.log('\nok');

@@ -39,6 +39,8 @@
   details summary:hover{opacity:.75}
 </style>
 
+<script>window.NCM_CONFIG={"gadsTag":"AW-16878828348","conversionSendTo":null,"whatsapp":"5511910144241"};</script>
+<script src="/assets/ncm-tag.js"></script>
 </head>
 <body>
 <div style="background:#020D25;color:#FFFFFF;overflow-x:hidden">
@@ -355,7 +357,7 @@
           </div>
 
           <button type="submit" style="width:100%;background:#C0A147;color:#020D25;border:none;border-radius:2px;padding:18px 20px;font-size:13.5px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;transition:background .25s ease">Enviar mensagem</button>
-          <p style="margin:0;font-size:12.5px;line-height:1.7;color:#8E9AAE">Os dados informados são usados exclusivamente para o contato sobre o assunto desta página e não são compartilhados com terceiros. O envio desta mensagem não cria, por si só, relação entre advogado e cliente.</p>
+          <p style="margin:0;font-size:12.5px;line-height:1.7;color:#8E9AAE">Seus dados são registrados e tratados para retornar o contato, conforme a LGPD, e o telefone pode ser compartilhado em formato irreversível (hash) apenas para medir a eficácia dos nossos anúncios. Acesso, correção ou exclusão em privacidade@ncm.adv.br · <a href="/privacidade" style="color:inherit">Política de privacidade</a>. O envio não cria, por si só, relação entre advogado e cliente.</p>
         </form>
       </div>
     </div>
@@ -454,8 +456,8 @@
                      ex.: "AW-123456789/AbC-D_efGhIjKlMnOp"
    ============================================================ */
 var CONFIG = {
-  whatsapp: "5511910144241",
-  conversionSendTo: null
+  whatsapp: (window.NCM_CONFIG && window.NCM_CONFIG.whatsapp) || "5511910144241",
+  conversionSendTo: (window.NCM_CONFIG && window.NCM_CONFIG.conversionSendTo) || null
 };
 
 (function () {
@@ -526,7 +528,6 @@ var CONFIG = {
 
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
-    if (hp.value) return;
 
     var d = tel.value.replace(/\D/g, "");
     var bad = {
@@ -545,22 +546,70 @@ var CONFIG = {
       if (order[i][1]) { order[i][0].focus(); return; }
     }
 
-    var msg = "Olá. Vim pelo site, pela página sobre inventário.\n\n" +
-      "Nome: " + nome.value.trim() + "\n" +
-      "WhatsApp: " + tel.value + "\n" +
-      "Falecimento: " + obito.value + "\n" +
-      "Acordo entre herdeiros: " + acordo.value;
+    var triagem = {
+      falecimento: obito.value,
+      acordo_herdeiros: acordo.value
+    };
 
-    var url = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg);
+    // Abrir a aba AGORA, dentro do gesto do clique. Depois do fetch o
+    // navegador trata como pop-up e bloqueia.
+    var aba = window.open("", "_blank");
+
+    var botao = form.querySelector("button[type=submit]");
+    var rotulo = botao ? botao.textContent : null;
+    if (botao) { botao.disabled = true; botao.textContent = "Enviando\u2026"; }
+
     var done = false;
-    function go() { if (done) return; done = true; window.open(url, "_blank", "noopener"); }
+    function go(protocolo) {
+      if (done) return;
+      done = true;
+      if (botao) { botao.disabled = false; botao.textContent = rotulo; }
 
-    if (CONFIG.conversionSendTo && typeof window.gtag === "function") {
-      window.gtag("event", "conversion", { send_to: CONFIG.conversionSendTo, event_callback: go });
-      setTimeout(go, 900);
-    } else {
-      go();
+      var msg = "Olá. Vim pelo site, pela página sobre inventário.\n\n" +
+        "Nome: " + nome.value.trim() + "\n" +
+        "WhatsApp: " + tel.value + "\n" +
+        "Falecimento: " + obito.value + "\n" +
+        "Acordo entre herdeiros: " + acordo.value +
+        (protocolo ? "\n\nProtocolo: " + protocolo : "");
+
+      var url = "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg);
+      if (aba && !aba.closed) { aba.location.href = url; } else { window.location.href = url; }
     }
+
+    // Falha de rede nunca pode segurar o lead: solta o usuário de qualquer jeito.
+    var seguranca = setTimeout(function () { go(null); }, 4500);
+
+    var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+    var expirou = setTimeout(function () { if (ctrl) ctrl.abort(); }, 3500);
+
+    fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      signal: ctrl ? ctrl.signal : undefined,
+      body: JSON.stringify({
+        origem: "lp-inventario",
+        tipo: "inventario",
+        nome: nome.value.trim(),
+        telefone: d,
+        triagem: triagem,
+        atribuicao: typeof window.ncmObterAtribuicao === "function" ? window.ncmObterAtribuicao() : {},
+        consentimento: typeof window.ncmLerConsentimento === "function" ? window.ncmLerConsentimento() : {},
+        pagina: window.location.pathname,
+        enviado_em: new Date().toISOString(),
+        site: hp.value || ""
+      })
+    }).then(function (r) {
+      return r.ok ? r.json() : null;
+    })["catch"](function () {
+      return null;
+    }).then(function (dados) {
+      clearTimeout(expirou);
+      clearTimeout(seguranca);
+      if (CONFIG.conversionSendTo && typeof window.gtag === "function") {
+        window.gtag("event", "conversion", { send_to: CONFIG.conversionSendTo });
+      }
+      go(dados && dados.protocolo ? dados.protocolo : null);
+    });
   });
 })();
 

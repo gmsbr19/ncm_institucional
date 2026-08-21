@@ -130,6 +130,12 @@
     }
   })();
 
+  // Exposto para os formulários das páginas estáticas montarem o corpo do lead
+  // com o mesmo contrato usado pelo components/FormularioLead.tsx.
+  window.ncmLerConsentimento = function () {
+    return lerConsentimento() || {};
+  };
+
   window.ncmObterAtribuicao = function () {
     try {
       var dados = JSON.parse(window.localStorage.getItem(CHAVE_ATRIBUICAO) || 'null');
