@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "prebuild": "node scripts/montar-paginas-design.mjs",
+    "montar:paginas": "node scripts/montar-paginas-design.mjs"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",
