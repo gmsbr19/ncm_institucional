@@ -87,13 +87,22 @@ Coisas que se perdem para sempre se pular:
 4. [ ] **Não mexer no registro A ainda.** Ele continua apontando para `107.150.167.175`. A troca de
        nameserver precisa ser invisível.
 5. [ ] No **Registro.br**, trocar os nameservers para os dois que a Cloudflare indicar.
-6. [ ] Esperar propagar (de minutos a algumas horas) e verificar:
+6. [ ] Esperar propagar e verificar. **Pergunte ao registro `.br`, não a um resolver
+       público** — o resolver guarda o NS antigo em cache por até 6h depois da troca e continua
+       mostrando o valor velho:
 
 ```bash
-nslookup -type=NS ncm.adv.br 8.8.8.8      # deve mostrar os da Cloudflare
-nslookup -type=MX ncm.adv.br 8.8.8.8      # deve continuar o da Microsoft
-nslookup -type=A ncm.adv.br 8.8.8.8       # deve continuar 107.150.167.175
+nslookup -type=NS ncm.adv.br a.dns.br     # fonte autoritativa da delegação
+nslookup -type=MX ncm.adv.br 1.1.1.1      # deve continuar o da Microsoft
+nslookup -type=A ncm.adv.br 1.1.1.1       # deve continuar 107.150.167.175
 ```
+
+   Observar MX ou `lexia` **não diz se a troca aconteceu**: as duas zonas foram montadas com
+   valores idênticos de propósito, então respondem igual antes e depois. Só o NS diferencia.
+
+   Para acompanhar sem ficar repetindo comando, `scripts/aguardar-delegacao.ps1` fica observando
+   o registro `.br` e depois os resolvers públicos largarem o cache, avisando com bipe em cada
+   etapa.
 
 7. [ ] **Testar o e-mail de verdade**: enviar e receber em `contato@ncm.adv.br`.
 
