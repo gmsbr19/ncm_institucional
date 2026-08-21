@@ -15,10 +15,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
+import { fileURLToPath } from 'node:url';
 import nextEnv from '@next/env'; // CommonJS — só exporta pelo default
 import { AJUSTES_LP_INVENTARIO } from './ajustes-lp-inventario.mjs';
 
-const RAIZ = path.join(import.meta.dirname, '..');
+// fileURLToPath em vez de import.meta.dirname: esse só existe a partir do Node
+// 20.11 e o script quebrava no build do EasyPanel. O engines do package.json já
+// exige Node 22, mas não custa o script rodar em qualquer versão com ESM.
+const RAIZ = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // Este script roda no prebuild, ANTES do next build, então não herda o
 // carregamento de .env que o Next faz por conta própria. Sem isso, um build

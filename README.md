@@ -142,7 +142,14 @@ cada uma contra a lista real do Search Console antes de publicar:
 
 ### 4. Serviço `site` no EasyPanel
 
-Projeto `ncm`, App via repositório Git, Nixpacks. Variáveis (ver `.env.example`):
+Projeto `ncm`, App via repositório Git, Nixpacks.
+
+**Versão do Node.** O Next 16 exige `>=20.9.0`. Sem indicação explícita o Nixpacks provisiona
+Node 18 e o build quebra. O `engines.node` do `package.json` e o `.nvmrc` fixam a 22 — que é a
+ordem em que o Nixpacks procura, depois da env var. Se ainda assim o build sair com Node 18,
+defina `NIXPACKS_NODE_VERSION=22` nas variáveis do serviço.
+
+Variáveis (ver `.env.example`):
 
 ```
 NODE_ENV=production
