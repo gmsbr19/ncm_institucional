@@ -3,6 +3,25 @@ export const WHATSAPP_NUMERO = process.env.NEXT_PUBLIC_WHATSAPP ?? '551191014424
 export const GADS_TAG = process.env.NEXT_PUBLIC_GADS_TAG ?? '';
 export const GADS_CONVERSION = process.env.NEXT_PUBLIC_GADS_CONVERSION || null;
 
+/**
+ * Contas do Google Ads a carregar via gtag('config', ...).
+ *
+ * A ação de conversão pode pertencer a uma conta diferente da tag principal —
+ * é o caso hoje. Um evento com `send_to` de conta que não foi configurada na
+ * página simplesmente não é registrado, sem erro no console e sem aviso em
+ * lugar nenhum. Por isso a conta da ação de conversão entra na lista mesmo
+ * quando difere da tag principal.
+ */
+export const GADS_CONTAS: string[] = (() => {
+  const contas: string[] = [];
+  if (GADS_TAG) contas.push(GADS_TAG);
+
+  const contaDaConversao = GADS_CONVERSION ? GADS_CONVERSION.split('/')[0] : '';
+  if (contaDaConversao && !contas.includes(contaDaConversao)) contas.push(contaDaConversao);
+
+  return contas;
+})();
+
 export const ESCRITORIO = {
   nomeFantasia: 'NCM Advogados',
   razaoSocial: 'Leandro Nunes Sociedade Individual de Advocacia',

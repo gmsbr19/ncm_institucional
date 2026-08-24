@@ -3,7 +3,7 @@ import Script from 'next/script';
 import { Poppins, Newsreader } from 'next/font/google';
 import './globals.css';
 import AvisoCookies from '@/components/AvisoCookies';
-import { ESCRITORIO, GADS_TAG, SITE_URL } from '@/lib/config';
+import { ESCRITORIO, GADS_CONTAS, SITE_URL } from '@/lib/config';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -83,20 +83,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           `}
         </Script>
 
-        {GADS_TAG && (
+        {GADS_CONTAS.length > 0 && (
           <>
             <Script
               id="gtag-js"
               strategy="afterInteractive"
-              src={`https://www.googletagmanager.com/gtag/js?id=${GADS_TAG}`}
+              src={`https://www.googletagmanager.com/gtag/js?id=${GADS_CONTAS[0]}`}
             />
             <Script id="gtag-config" strategy="afterInteractive">
               {`
                 gtag('js', new Date());
-                gtag('config', '${GADS_TAG}', {
+                ${GADS_CONTAS.map(
+                  (conta) => `gtag('config', '${conta}', {
                   url_passthrough: true,
                   ads_data_redaction: true
-                });
+                });`,
+                ).join('\n                ')}
               `}
             </Script>
           </>

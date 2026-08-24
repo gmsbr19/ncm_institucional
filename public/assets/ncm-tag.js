@@ -77,17 +77,33 @@
 
   // ------------------------------------------------------------------------- gtag/js
 
-  if (CONFIG.gadsTag) {
+  // A ação de conversão pode pertencer a uma conta diferente da tag principal.
+  // Um evento com send_to de conta não configurada na página não é registrado —
+  // sem erro no console, sem aviso nenhum. Por isso a conta da ação de conversão
+  // entra na lista mesmo quando difere.
+  var contas = [];
+  if (CONFIG.gadsTag) contas.push(CONFIG.gadsTag);
+
+  var contaDaConversao = CONFIG.conversionSendTo
+    ? String(CONFIG.conversionSendTo).split('/')[0]
+    : '';
+  if (contaDaConversao && contas.indexOf(contaDaConversao) === -1) {
+    contas.push(contaDaConversao);
+  }
+
+  if (contas.length > 0) {
     var s = document.createElement('script');
     s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(CONFIG.gadsTag);
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(contas[0]);
     document.head.appendChild(s);
 
     gtag('js', new Date());
-    gtag('config', CONFIG.gadsTag, {
-      url_passthrough: true,
-      ads_data_redaction: true,
-    });
+    for (var c = 0; c < contas.length; c++) {
+      gtag('config', contas[c], {
+        url_passthrough: true,
+        ads_data_redaction: true,
+      });
+    }
   }
 
   // -------------------------------------------------------------------- Atribuição
