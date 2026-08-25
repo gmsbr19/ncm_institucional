@@ -25,13 +25,15 @@ npm run dev
   repassa ao Lexia com `x-ncm-secret`, com timeout de 3s e fallback `{ protocolo: null }`.
 - `components/FormularioLead.tsx` — 4 campos, máscara de telefone, ordem de envio que abre o
   WhatsApp mesmo se a API falhar (nunca perde lead).
-- `components/AvisoCookies.tsx` — Aceitar/Recusar/Escolher, foco gerenciado, ESC, reabre via
-  qualquer elemento com `data-ncm-cookies`.
+- `components/AvisoCookies.tsx` — barra fina no rodapé (Escolher/Recusar/OK), foco gerenciado,
+  ESC, reabre via qualquer elemento com `data-ncm-cookies`.
 - `lib/atribuicao.ts` / `lib/consentimento.ts` — captura de `gclid`/`gbraid`/`wbraid`/`msclkid`/
   `fbclid` + UTMs na entrada da página, `localStorage` (`ncm_attr`, 90 dias, `ncm_consent`, versão
   1) — mesmas chaves usadas por `public/lp/inventario.html`.
-- Consent Mode v2 (default denied) em `app/layout.tsx`, `url_passthrough` e `ads_data_redaction`
-  ativos, tag `AW-16878828348`.
+- Consent Mode v2 em `app/layout.tsx`, `url_passthrough` e `ads_data_redaction` ativos, tag
+  `AW-18397512561`. **Modelo opt-out** por decisão do escritório: medição e publicidade ativas
+  por padrão, com recusa a qualquer momento. A base legal declarada em `/privacidade` é legítimo
+  interesse — se isso voltar a ser opt-in, os dois textos mudam juntos.
 - `public/assets/ncm-tag.js` — mesma coisa em JS puro para as páginas **estáticas**, que não
   passam pelo layout do Next: Consent Mode, gtag/js, captura de atribuição e aviso de cookies,
   usando as mesmas chaves (`ncm_attr`, `ncm_consent` v1). Injetado no `<head>` antes de qualquer
@@ -40,7 +42,8 @@ npm run dev
   `design/inventario.html`, servida por rewrite (preserva a query string). Os ajustes dela estão
   isolados em `scripts/ajustes-lp-inventario.mjs`: `noindex`, config vinda do ambiente, honeypot
   decidido pela API e — o principal — o envio do lead ao Lexia, que o arquivo original não fazia.
-- `next.config.ts` — sem `output: 'export'`; mapa de redirects 301 com 3 entradas.
+- `next.config.ts` — sem `output: 'export'`; mapa de redirects 301 com 7 entradas, conferidas
+  contra o sitemap real do WordPress.
 - `sitemap.ts`, `robots.ts`, JSON-LD `LegalService` no layout, `Article`+`BreadcrumbList` nos
   posts.
 - Zero "especialista"/superlativos/promessas de resultado no conteúdo novo — ver seção
@@ -58,8 +61,10 @@ no corpo do POST para `/api/lead`.
 
 O mesmo foi verificado entrando direto na LP:
 `/inventario?gclid=LP_TESTE_999&utm_source=google&utm_medium=cpc&utm_campaign=inventario-sp` →
-POST com `origem: "lp-inventario"`, o `gclid` e as UTMs completas. Com o Lexia devolvendo
-protocolo, ele aparece na mensagem do WhatsApp ("Protocolo: NCM-2026-0042").
+POST com `origem: "lp-inventario"`, o `gclid` e as UTMs completas.
+
+A integração com o Lexia está funcionando em produção: um POST em `/api/lead` devolveu
+`{"protocolo":"NCM-ER8RP5"}`, ou seja, o serviço aceita o `x-ncm-secret` e grava o lead.
 
 ## Páginas de design
 
@@ -106,9 +111,10 @@ Não tenho acesso à VPS, ao EasyPanel nem ao DNS do domínio — essas etapas e
    arquivos de design. Já `/sobre`, `/servicos/*` e `/blog/*` não têm imagem nenhuma: não houve
    asset fornecido para elas (as três páginas do WordPress trazem as suas embutidas em data URI,
    mas são de outro layout). Se quiser imagens nessas páginas, precisamos definir a origem.
-6. **Ajuste no serviço `lexia`** — pedido na seção 2 (aceitar `x-ncm-secret` como autenticação
-   alternativa nessa rota, mantendo NextAuth pro resto) é mudança no código de outro serviço, que
-   não está neste repositório.
+6. **Redirect `www` → apex** — única pendência de configuração. Hoje `www.ncm.adv.br` serve o
+   site inteiro em paralelo ao apex, com conteúdo idêntico. O canonical aponta para o apex e
+   segura a barra, mas a correção é um middleware de redirect no EasyPanel, preservando a query
+   string.
 7. **Deploy no EasyPanel, DNS, exportação do WordPress e verificação do Search Console** — exigem
    acesso a sistemas que não tenho neste ambiente. Passo a passo abaixo.
 
@@ -158,7 +164,7 @@ PORT=3000
 LEXIA_URL=http://lexia:3000
 LEXIA_SECRET=<mesmo valor do lexia>
 NEXT_PUBLIC_SITE_URL=https://ncm.adv.br
-NEXT_PUBLIC_GADS_TAG=AW-16878828348
+NEXT_PUBLIC_GADS_TAG=AW-18397512561
 NEXT_PUBLIC_GADS_CONVERSION=
 NEXT_PUBLIC_WHATSAPP=5511910144241
 ```
