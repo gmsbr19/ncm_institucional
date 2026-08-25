@@ -85,7 +85,29 @@ const HANDLER_NOVO = `var triagem = {
       go();
     });`;
 
+// As seções de Documentos e Dúvidas não tinham id, então não dava para linkar
+// direto para elas (as outras quatro já tinham: topo, prazos, vias, contato).
+// Servem de destino para sitelink de campanha.
+//
+// As duas <section> abrem com a MESMA tag; o que as distingue é o max-width do
+// div seguinte — 1180px em Documentos, 900px nas Dúvidas. Por isso o trecho de
+// busca inclui esse div: sozinha, a tag casaria nas duas.
+const SECAO_CLARA =
+  '<section style="background:#F3F1EC;color:#1C2B3D;padding:0 clamp(18px,5vw,44px) clamp(56px,8vw,104px)">';
+
+function ancoraDeSecao(id, maxWidth) {
+  const div = `\n    <div style="max-width:${maxWidth};margin:0 auto;border-top:1px solid #D2D3D5;padding-top:clamp(48px,7vw,88px)">`;
+  return {
+    porque: `âncora #${id}`,
+    de: SECAO_CLARA + div,
+    para: SECAO_CLARA.replace('<section ', `<section id="${id}" `) + div,
+  };
+}
+
 export const AJUSTES_LP_INVENTARIO = [
+  ancoraDeSecao('documentos', '1180px'),
+  ancoraDeSecao('duvidas', '900px'),
+
   // É página de campanha paga: canibalizaria /servicos/inventario no orgânico.
   {
     porque: 'noindex — página de campanha paga',
