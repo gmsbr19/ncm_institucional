@@ -22,6 +22,24 @@ export const GADS_CONTAS: string[] = (() => {
   return contas;
 })();
 
+// Variáveis NEXT_PUBLIC_* são embutidas no bundle em tempo de BUILD. Faltando
+// no build, o valor vira string vazia e os formulários param de disparar
+// conversão — sem erro, sem log, sem nada visível na página. Este aviso sai no
+// log do deploy, que é o único lugar onde dá para perceber a tempo.
+//
+// Atenção ao cache: o Next guarda o prerender em .next/cache e mudança apenas
+// de variável de ambiente não o invalida. Se a variável foi corrigida no painel
+// mas as páginas continuam sem ela, o build precisa ser feito sem cache.
+if (typeof window === 'undefined' && process.env.NODE_ENV === 'production') {
+  if (!GADS_CONVERSION) {
+    console.warn(
+      '[config] NEXT_PUBLIC_GADS_CONVERSION vazio — os formulários NÃO vão disparar conversão.',
+    );
+  } else {
+    console.log(`[config] contas do Google Ads carregadas: ${GADS_CONTAS.join(', ')}`);
+  }
+}
+
 export const ESCRITORIO = {
   nomeFantasia: 'NCM Advogados',
   razaoSocial: 'Leandro Nunes Sociedade Individual de Advocacia',

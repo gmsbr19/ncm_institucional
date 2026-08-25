@@ -135,6 +135,11 @@ function injetarTag(html) {
   if (!config.gadsTag) {
     console.warn('  AVISO: NEXT_PUBLIC_GADS_TAG vazio — a página sai sem gtag/js.');
   }
+  if (!config.conversionSendTo) {
+    console.warn('  AVISO: NEXT_PUBLIC_GADS_CONVERSION vazio — o formulário não dispara conversão.');
+  } else {
+    console.log(`  conversão: ${config.conversionSendTo}`);
+  }
 
   const tag =
     `<script>window.NCM_CONFIG=${JSON.stringify(config)};</script>\n` +
