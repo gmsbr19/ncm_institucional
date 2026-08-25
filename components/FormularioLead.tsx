@@ -7,7 +7,14 @@ import { GADS_CONVERSION, WHATSAPP_NUMERO } from '@/lib/config';
 
 export type CampoTriagem = {
   chave: string;
+  /** Pergunta completa, usada como label do campo no formulário. */
   rotulo: string;
+  /**
+   * Versão curta, usada na mensagem de WhatsApp. A pergunta inteira lê mal ali
+   * ("Quando ocorreu o falecimento? Há menos de 60 dias"); o formato da LP,
+   * com rótulo curto e dois-pontos, é mais legível. Cai no `rotulo` se ausente.
+   */
+  rotuloCurto?: string;
   opcoes: string[];
 };
 
@@ -80,7 +87,16 @@ export default function FormularioLead({ origem, titulo, triagem, mensagemIntro 
 
     const dadosTriagem = { [triagem[0].chave]: campo1, [triagem[1].chave]: campo2 };
     const introducao = mensagemIntro ?? 'Vim pelo site.';
-    const textoMensagem = `Olá. ${introducao}\n\nNome: ${nome}\n${triagem[0].rotulo} ${campo1}\n${triagem[1].rotulo} ${campo2}`;
+    // Mesmo formato da LP: rótulo curto, dois-pontos, uma linha por resposta.
+    const linha = (campo: CampoTriagem, valor: string) =>
+      `${campo.rotuloCurto ?? campo.rotulo}: ${valor}`;
+    const textoMensagem = [
+      `Olá. ${introducao}`,
+      '',
+      `Nome: ${nome}`,
+      linha(triagem[0], campo1),
+      linha(triagem[1], campo2),
+    ].join('\n');
 
     const abrirWhatsApp = () => {
       const url = `https://wa.me/${WHATSAPP_NUMERO}?text=${encodeURIComponent(textoMensagem)}`;

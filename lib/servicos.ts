@@ -67,6 +67,7 @@ export const SERVICOS: Servico[] = [
       {
         chave: 'falecimento',
         rotulo: 'Quando ocorreu o falecimento?',
+        rotuloCurto: 'Falecimento',
         opcoes: [
           'Há menos de 60 dias',
           'Entre 60 e 180 dias',
@@ -77,6 +78,7 @@ export const SERVICOS: Servico[] = [
       {
         chave: 'acordo_herdeiros',
         rotulo: 'Os herdeiros estão de acordo quanto à partilha?',
+        rotuloCurto: 'Acordo entre herdeiros',
         opcoes: [
           'Sim, todos estão de acordo',
           'Há divergência entre os herdeiros',
@@ -145,6 +147,7 @@ export const SERVICOS: Servico[] = [
       {
         chave: 'situacao_imovel',
         rotulo: 'Qual situação mais se aproxima da sua?',
+        rotuloCurto: 'Situação',
         opcoes: [
           'Matrícula desatualizada ou divergente',
           'Imóvel sem escritura registrada',
@@ -157,6 +160,7 @@ export const SERVICOS: Servico[] = [
       {
         chave: 'urgencia',
         rotulo: 'Você precisa regularizar para...',
+        rotuloCurto: 'Motivo',
         opcoes: [
           'Vender ou financiar o imóvel',
           'Organizar uma herança',
@@ -224,11 +228,13 @@ export const SERVICOS: Servico[] = [
       {
         chave: 'quantidade_imoveis',
         rotulo: 'Quantos imóveis compõem o patrimônio a organizar?',
+        rotuloCurto: 'Imóveis',
         opcoes: ['1 ou 2 imóveis', '3 a 5 imóveis', 'Mais de 5 imóveis', 'Ainda não sei precisar'],
       },
       {
         chave: 'objetivo',
         rotulo: 'O que mais pesa na sua decisão hoje?',
+        rotuloCurto: 'Objetivo',
         opcoes: [
           'Reduzir a carga tributária sobre aluguéis',
           'Organizar a sucessão para a família',
@@ -282,11 +288,13 @@ export const SERVICOS: Servico[] = [
       {
         chave: 'papel',
         rotulo: 'Você fala em nome de...',
+        rotuloCurto: 'Papel',
         opcoes: ['Síndico ou administração', 'Condômino', 'Administradora de condomínios'],
       },
       {
         chave: 'assunto',
         rotulo: 'Qual assunto se aproxima do seu caso?',
+        rotuloCurto: 'Assunto',
         opcoes: [
           'Cobrança de inadimplentes',
           'Assembleia ou convenção',
@@ -331,11 +339,13 @@ export const SERVICOS: Servico[] = [
       {
         chave: 'perfil',
         rotulo: 'Você é...',
+        rotuloCurto: 'Perfil',
         opcoes: ['Locador (proprietário)', 'Locatário (inquilino)', 'Imobiliária ou administradora'],
       },
       {
         chave: 'assunto',
         rotulo: 'Qual assunto se aproxima do seu caso?',
+        rotuloCurto: 'Assunto',
         opcoes: [
           'Elaborar ou revisar um contrato',
           'Inquilino inadimplente / despejo',
@@ -379,11 +389,13 @@ export const SERVICOS: Servico[] = [
       {
         chave: 'operacao',
         rotulo: 'A due diligence é para...',
+        rotuloCurto: 'Operação',
         opcoes: ['Comprar um imóvel', 'Vender um imóvel', 'Financiar um imóvel', 'Outra operação'],
       },
       {
         chave: 'prazo',
         rotulo: 'Qual o prazo da sua operação?',
+        rotuloCurto: 'Prazo',
         opcoes: ['Já tenho proposta assinada', 'Negociação em andamento', 'Ainda pesquisando, sem pressa'],
       },
     ],
