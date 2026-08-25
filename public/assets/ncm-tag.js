@@ -30,12 +30,15 @@
   }
   window.gtag = gtag;
 
+  // Modelo OPT-OUT, por decisão do escritório: medição e publicidade ativas
+  // por padrão, com recusa disponível a qualquer momento no aviso de cookies.
+  // A base legal declarada em /privacidade é legítimo interesse (art. 7º, IX),
+  // não consentimento — as duas coisas precisam continuar batendo.
   gtag('consent', 'default', {
-    ad_storage: 'denied',
-    ad_user_data: 'denied',
-    ad_personalization: 'denied',
-    analytics_storage: 'denied',
-    wait_for_update: 500,
+    ad_storage: 'granted',
+    ad_user_data: 'granted',
+    ad_personalization: 'granted',
+    analytics_storage: 'granted',
   });
 
   function lerConsentimento() {
@@ -168,20 +171,26 @@
 
   // ------------------------------------------------------------------ Aviso de cookies
 
+  // Barra fina: no modelo opt-out o aviso informa e oferece a recusa, em vez de
+  // pedir uma decisão antes de liberar o site. Por isso ocupa pouco espaço.
   var CSS =
     '#ncm-cookies{position:fixed;left:0;right:0;bottom:0;z-index:9999;background:#fff;' +
-    'border-top:1px solid #D2D3D5;box-shadow:0 0 30px rgba(0,0,0,.10);padding:20px;' +
+    'border-top:1px solid #D2D3D5;box-shadow:0 -2px 16px rgba(0,0,0,.08);padding:10px 16px;' +
     "font-family:Poppins,-apple-system,BlinkMacSystemFont,sans-serif;color:#020D25}" +
-    '#ncm-cookies .ncm-in{max-width:56rem;margin:0 auto;display:flex;flex-direction:column;gap:16px}' +
-    '#ncm-cookies p{font-size:14px;line-height:1.6;margin:0}' +
-    '#ncm-cookies .ncm-bts{display:flex;flex-wrap:wrap;gap:12px}' +
-    '#ncm-cookies button{font:inherit;font-size:13px;font-weight:600;text-transform:uppercase;' +
-    'letter-spacing:1.2px;padding:10px 20px;border-radius:2px;cursor:pointer;border:1px solid transparent}' +
+    '#ncm-cookies .ncm-in{max-width:72rem;margin:0 auto;display:flex;align-items:center;' +
+    'gap:14px;flex-wrap:wrap;justify-content:center}' +
+    '#ncm-cookies p{font-size:12.5px;line-height:1.5;margin:0;flex:1 1 320px}' +
+    '#ncm-cookies .ncm-bts{display:flex;gap:8px;align-items:center;flex-shrink:0}' +
+    '#ncm-cookies button{font:inherit;font-size:12px;font-weight:600;padding:7px 14px;' +
+    'border-radius:2px;cursor:pointer;border:1px solid transparent;white-space:nowrap}' +
     '#ncm-cookies .ncm-ok{background:#C0A147;color:#020D25}' +
-    '#ncm-cookies .ncm-no{background:transparent;border-color:#020D25;color:#020D25}' +
-    '#ncm-cookies .ncm-esc{background:transparent;color:#020D25;text-decoration:underline}' +
-    '#ncm-cookies label{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.5}' +
-    '#ncm-cookies a{color:inherit}';
+    '#ncm-cookies .ncm-no{background:transparent;border-color:#D2D3D5;color:#020D25}' +
+    '#ncm-cookies .ncm-esc{background:transparent;color:#6C6B7D;text-decoration:underline;padding:7px 4px}' +
+    '#ncm-cookies label{display:flex;gap:10px;align-items:flex-start;font-size:13px;' +
+    'line-height:1.5;flex:1 1 100%}' +
+    '#ncm-cookies a{color:inherit}' +
+    '@media(max-width:640px){#ncm-cookies .ncm-in{justify-content:flex-start}' +
+    '#ncm-cookies p{flex:1 1 100%}}';
 
   var caixa = null;
 
@@ -225,26 +234,35 @@
 
     if (modo === 'resumo') {
       caixa.innerHTML =
-        '<div class="ncm-in"><p>Usamos cookies para medir a eficácia dos nossos anúncios e ' +
-        'melhorar sua experiência. Você pode aceitar, recusar ou escolher quais categorias ' +
-        'autoriza. Saiba mais na <a href="/privacidade">Política de privacidade</a>.</p>' +
+        '<div class="ncm-in"><p>Usamos cookies para medir a eficácia dos nossos anúncios. ' +
+        'Você pode recusar a qualquer momento — veja a ' +
+        '<a href="/privacidade">Política de privacidade</a>.</p>' +
         '<div class="ncm-bts">' +
-        '<button type="button" class="ncm-ok" data-acao="aceitar">Aceitar</button>' +
-        '<button type="button" class="ncm-no" data-acao="recusar">Recusar</button>' +
         '<button type="button" class="ncm-esc" data-acao="escolher">Escolher</button>' +
+        '<button type="button" class="ncm-no" data-acao="recusar">Recusar</button>' +
+        '<button type="button" class="ncm-ok" data-acao="aceitar">OK</button>' +
         '</div></div>';
     } else {
+      // As caixas refletem o estado atual. Sem escolha salva, vêm marcadas —
+      // é o padrão opt-out, e mostrar desmarcado seria mentir sobre o que está
+      // acontecendo agora.
+      var atual = lerConsentimento();
+      var medMarcado = atual ? atual.medicao : true;
+      var pubMarcado = atual ? atual.publicidade : true;
+
       caixa.innerHTML =
         '<div class="ncm-in"><p><strong>Preferências de cookies</strong></p>' +
         '<label><input type="checkbox" checked disabled><span><strong>Necessários</strong> — ' +
         'sempre ativos. Essenciais para o funcionamento do site.</span></label>' +
-        '<label><input type="checkbox" data-cat="medicao"><span><strong>Medição</strong> — ' +
-        'estatísticas de uso e desempenho dos anúncios.</span></label>' +
-        '<label><input type="checkbox" data-cat="publicidade"><span><strong>Publicidade</strong> — ' +
-        'personalização e mensuração de campanhas.</span></label>' +
+        '<label><input type="checkbox" data-cat="medicao"' + (medMarcado ? ' checked' : '') +
+        '><span><strong>Medição</strong> — estatísticas de uso e desempenho dos anúncios.' +
+        '</span></label>' +
+        '<label><input type="checkbox" data-cat="publicidade"' + (pubMarcado ? ' checked' : '') +
+        '><span><strong>Publicidade</strong> — personalização e mensuração de campanhas.' +
+        '</span></label>' +
         '<div class="ncm-bts">' +
-        '<button type="button" class="ncm-ok" data-acao="salvar">Salvar preferências</button>' +
         '<button type="button" class="ncm-esc" data-acao="voltar">Voltar</button>' +
+        '<button type="button" class="ncm-ok" data-acao="salvar">Salvar preferências</button>' +
         '</div></div>';
     }
 

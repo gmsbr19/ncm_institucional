@@ -3,6 +3,16 @@
  * escritório antes de publicar (Provimento 205/2021 e LGPD). Foi redigido
  * a partir do briefing do projeto e do conteúdo já publicado nas páginas
  * de campanha, mas nenhum advogado do escritório revisou esta versão.
+ *
+ * ATENÇÃO ESPECIAL ao item 4 (base legal) e ao 11 (cookies): o site opera em
+ * modelo OPT-OUT — cookies de medição e publicidade ativos por padrão, com
+ * recusa disponível a qualquer momento —, e por isso declara legítimo interesse
+ * (art. 7º, IX) em vez de consentimento (art. 7º, I) para essa finalidade. Foi
+ * decisão do escritório, tomada para melhorar a contabilização de conversões.
+ * É o ponto de maior exposição deste documento e o que mais merece revisão:
+ * boa parte da orientação sobre cookies no Brasil trata a autorização prévia
+ * como o caminho mais seguro. Se a decisão for revertida, o padrão em
+ * app/layout.tsx e public/assets/ncm-tag.js precisa voltar a 'denied' junto.
  */
 import type { Metadata } from 'next';
 import Cabecalho from '@/components/Cabecalho';
@@ -98,11 +108,14 @@ export default function PaginaPrivacidade() {
                 </li>
                 <li>
                   <strong>Legítimo interesse</strong> (art. 7º, IX) — para a segurança do
-                  formulário contra robôs e para a medição própria de navegação no site;
-                </li>
-                <li>
-                  <strong>Consentimento</strong> (art. 7º, I) — para os cookies de medição e de
-                  publicidade, que você autoriza (ou recusa) no aviso de cookies do site.
+                  formulário contra robôs, para a medição de navegação no site e para medir a
+                  eficácia dos nossos anúncios, incluindo os cookies usados com essa finalidade.
+                  Esses cookies ficam ativos por padrão, e você pode recusá-los a qualquer
+                  momento no aviso de cookies ou em{' '}
+                  <button type="button" data-ncm-cookies className="underline">
+                    Preferências de cookies
+                  </button>
+                  , sem qualquer prejuízo à navegação ou ao atendimento.
                 </li>
               </ul>
             </Secao>
@@ -177,8 +190,11 @@ export default function PaginaPrivacidade() {
                 O site utiliza três categorias de cookies: <strong>necessários</strong>, sempre
                 ativos, essenciais para o funcionamento do site; <strong>de medição</strong>, para
                 estatísticas de uso; e <strong>de publicidade</strong>, para mensuração da
-                eficácia de anúncios. Sua escolha fica registrada no navegador e pode ser
-                alterada a qualquer momento clicando em{' '}
+                eficácia de anúncios. As duas últimas categorias vêm <strong>ativas por
+                padrão</strong>, com base no legítimo interesse descrito no item 4, e podem ser
+                recusadas a qualquer momento — a recusa não afeta em nada a navegação nem o
+                atendimento. Sua escolha fica registrada no navegador e pode ser alterada quando
+                você quiser clicando em{' '}
                 <button type="button" data-ncm-cookies className="underline">
                   Preferências de cookies
                 </button>

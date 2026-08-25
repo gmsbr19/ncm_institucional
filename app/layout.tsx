@@ -55,17 +55,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR" className={`${poppins.variable} ${newsreader.variable}`}>
       <head>
-        {/* Consent Mode v2 — defaults denied, precisa rodar antes do gtag/js. */}
+        {/*
+          Consent Mode v2 — precisa rodar antes do gtag/js.
+
+          Modelo OPT-OUT, por decisão do escritório: medição e publicidade
+          ativas por padrão, com recusa disponível a qualquer momento no aviso
+          de cookies. A base legal declarada em /privacidade é legítimo
+          interesse (art. 7º, IX), não consentimento — as duas coisas precisam
+          continuar batendo. Se um dia isto voltar a ser opt-in, a política de
+          privacidade tem que voltar junto.
+        */}
         <Script id="consent-mode-default" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('consent', 'default', {
-              ad_storage: 'denied',
-              ad_user_data: 'denied',
-              ad_personalization: 'denied',
-              analytics_storage: 'denied',
-              wait_for_update: 500
+              ad_storage: 'granted',
+              ad_user_data: 'granted',
+              ad_personalization: 'granted',
+              analytics_storage: 'granted'
             });
             (function () {
               try {
