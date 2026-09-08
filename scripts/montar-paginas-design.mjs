@@ -18,6 +18,7 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import nextEnv from '@next/env'; // CommonJS — só exporta pelo default
 import { AJUSTES_LP_INVENTARIO } from './ajustes-lp-inventario.mjs';
+import { AJUSTES_LP_USUCAPIAO } from './ajustes-lp-usucapiao.mjs';
 
 // fileURLToPath em vez de import.meta.dirname: esse só existe a partir do Node
 // 20.11 e o script quebrava no build do EasyPanel. O engines do package.json já
@@ -50,6 +51,11 @@ const EXTENSAO_POR_MIME = {
 const AJUSTES = [
   // Provimento 205/2021, art. 3º, III — "especialista"/"especialização" são vedados.
   // Ver seção 7 do briefing do projeto.
+  //
+  // A ordem importa: a lista é aplicada de cima para baixo com replaceAll, então
+  // a variante mais longa precisa vir primeiro. Ao contrário, "Falar com um
+  // Especialista Agora" (LP de usucapião) viraria "Falar com o escritório Agora".
+  ['Falar com um Especialista Agora', 'Falar com o escritório'],
   ['Falar com um Especialista', 'Falar com o escritório'],
   ['Advogado Especialista em Direito Imobiliário', 'Advogado · Atuação em Direito Imobiliário'],
   ['Especialização em Direito Imobiliário', 'Atuação em Direito Imobiliário'],
@@ -70,6 +76,13 @@ const PAGINAS = [
     assets: 'inventario',
     canonical: '/inventario',
     ajustes: AJUSTES_LP_INVENTARIO,
+  },
+  {
+    origem: 'design/usucapiao.html',
+    saida: 'public/lp/usucapiao.html',
+    assets: 'usucapiao',
+    canonical: '/usucapiao',
+    ajustes: AJUSTES_LP_USUCAPIAO,
   },
 ];
 

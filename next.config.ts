@@ -9,7 +9,10 @@ const nextConfig: NextConfig = {
       // beforeFiles porque "/" precisa ser interceptado antes de qualquer
       // resolução de rota do App Router.
       beforeFiles: [{ source: '/', destination: '/home.html' }],
-      afterFiles: [{ source: '/inventario', destination: '/lp/inventario.html' }],
+      afterFiles: [
+        { source: '/inventario', destination: '/lp/inventario.html' },
+        { source: '/usucapiao', destination: '/lp/usucapiao.html' },
+      ],
       fallback: [],
     };
   },
@@ -30,7 +33,10 @@ const nextConfig: NextConfig = {
     // caía em 404 silenciosamente.
     return [
       { source: '/regularizacao-de-imoveis', destination: '/servicos/regularizacao-imobiliaria', permanent: true },
-      { source: '/usucapiao', destination: '/servicos/regularizacao-imobiliaria', permanent: true },
+      // /usucapiao NÃO entra aqui: a LP clonada do WordPress passou a ser servida
+      // nessa URL pelo rewrite acima, então a URL antiga continua respondendo com
+      // a página que o Google já conhece. Um redirect aqui venceria o rewrite —
+      // redirects são avaliados antes — e a LP nunca apareceria.
       { source: '/holding', destination: '/servicos/holding', permanent: true },
       { source: '/assessoria-patrimonial', destination: '/servicos/holding', permanent: true },
       { source: '/condominial', destination: '/servicos/condominial', permanent: true },

@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Usucapião: como regularizar o imóvel | NCM Advogados</title>
+<meta name="description" content="Atuação em usucapião e regularização de imóveis, para todo o Centro-Sul do Brasil. Entenda os caminhos que a lei prevê para colocar o imóvel no nome certo.">
+<meta property="og:title" content="Usucapião: como regularizar o imóvel | NCM Advogados">
+<meta property="og:description" content="Regularize seu imóvel pela via legal. Atuação em usucapião rural, urbana e extrajudicial.">
+<meta property="og:type" content="website">
+<meta name="robots" content="noindex, follow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<style>
+/* ===================== RESET ===================== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+html, body { overflow-x: clip; width: 100%; }
+/* clip, nao hidden: hidden faria de body um contexto de rolagem e a
+   topbar sticky deixaria de grudar no topo. */
+img { max-width: 100%; height: auto; display: block; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* ===================== TOKENS ===================== */
+:root {
+  --bg:        #070a14;
+  --bg-2:      #0b0f1d;
+  --surface:   #101627;
+  --surface-2: #141c30;
+  --border:    #1f2940;
+  --border-lt: #2a3552;
+  --text:      #F4F6FB;
+  --muted:     #9aa6be;
+  --muted-2:   #6c7790;
+  /* accent champagne/ouro sóbrio — patrimonial premium */
+  --gold:      #c9a24b;
+  --gold-lt:   #e8cf8f;
+  --gold-dk:   #a07f2e;
+  --navy-glow: #1b3a6b;
+  --grad-gold: linear-gradient(135deg, #e8cf8f 0%, #c9a24b 55%, #a07f2e 100%);
+  --grad-navy: linear-gradient(160deg, #0b1226 0%, #070a14 100%);
+  --whatsapp:  #25D366;
+  --whatsapp-dk: #1da851;
+  --radius:    14px;
+  --radius-lg: 22px;
+  --maxw:      1200px;
+  --shadow:    0 20px 60px rgba(0,0,0,.45);
+  --shadow-gold: 0 10px 40px rgba(201,162,75,.18);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===================== UTIL ===================== */
+.wrap { width: 100%; max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+.serif { font-family: 'Cormorant Garamond', serif; }
+.gold-text {
+  background: var(--grad-gold);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: var(--gold-lt);
+}
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: .74rem; font-weight: 600; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--gold);
+  margin-bottom: 18px;
+}
+.eyebrow::before {
+  content: ''; width: 26px; height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+}
+.section { padding: 78px 0; position: relative; }
+.section-sm { padding: 56px 0; }
+
+h1, h2, h3 { line-height: 1.15; font-weight: 800; letter-spacing: -.02em; }
+.h2 { font-size: 1.95rem; margin-bottom: 18px; }
+.lead { color: var(--muted); font-size: 1.05rem; max-width: 60ch; }
+
+/* ===================== REVEAL ===================== */
+.reveal { opacity: 0; transform: translateY(34px); transition: opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal.d1 { transition-delay: .08s; }
+.reveal.d2 { transition-delay: .16s; }
+.reveal.d3 { transition-delay: .24s; }
+.reveal.d4 { transition-delay: .32s; }
+
+/* ===================== PROGRESS BAR ===================== */
+#progressBar {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: var(--grad-gold); z-index: 1000;
+  box-shadow: 0 0 12px rgba(201,162,75,.6);
+  transition: width .1s linear;
+}
+
+/* ===================== TOPBAR ===================== */
+.topbar {
+  position: sticky; top: 0; z-index: 900;
+  background: rgba(7,10,20,.82);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-inner { display: flex; align-items: center; justify-content: space-between; padding: 12px 22px; max-width: var(--maxw); margin: 0 auto; }
+.topbar-logo { height: 38px !important; width: auto !important; max-width: 220px !important; max-height: 38px !important; opacity: .96; }
+.topbar-cta {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: .8rem; font-weight: 700; color: var(--text);
+  border: 1px solid var(--border-lt); padding: 9px 15px; border-radius: 100px;
+  transition: all .25s;
+}
+.topbar-cta svg { width: 15px; height: 15px; }
+.topbar-cta:hover { border-color: var(--gold); color: var(--gold-lt); }
+.topbar-cta .lbl-full { display: none; }
+@media (min-width: 560px) { .topbar-cta .lbl-full { display: inline; } .topbar-cta .lbl-short { display: none; } }
+
+/* ===================== BTN WHATSAPP ===================== */
+.btn-wa {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  background: var(--whatsapp); color: #04210f;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 800; font-size: .92rem; line-height: 1.25;
+  padding: 16px 26px; border-radius: 100px;
+  white-space: normal; text-align: center;
+  box-shadow: 0 8px 28px rgba(37,211,102,.32);
+  transition: transform .22s, box-shadow .22s, background .22s;
+  position: relative; overflow: hidden;
+}
+.btn-wa svg { width: 21px; height: 21px; flex-shrink: 0; }
+.btn-wa:hover { background: var(--whatsapp-dk); transform: translateY(-2px); box-shadow: 0 12px 36px rgba(37,211,102,.42); }
+.btn-wa::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+  transform: skewX(-20deg); animation: shine 3.6s ease-in-out infinite;
+}
+@keyframes shine { 0%,60% { left: -100%; } 100% { left: 160%; } }
+.btn-gold {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  background: var(--grad-gold); color: #1a1305;
+  font-weight: 800; font-size: .92rem; padding: 15px 26px; border-radius: 100px;
+  box-shadow: var(--shadow-gold); transition: transform .22s, box-shadow .22s;
+}
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 14px 44px rgba(201,162,75,.3); }
+@media (min-width: 768px) { .btn-wa, .btn-gold { font-size: 1rem; padding: 18px 34px; } }
+
+/* ===================== HERO ===================== */
+#hero { position: relative; overflow: hidden; background: var(--grad-navy); }
+.hero-veil {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(120% 90% at 85% 80%, rgba(27,58,107,.5) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(7,10,20,.55) 0%, rgba(7,10,20,.82) 100%);
+}
+/* SVG grid pattern */
+.hero-grid { position: absolute; inset: 0; z-index: 1; opacity: .5; }
+.hero-inner { position: relative; z-index: 3; padding: 40px 0 56px; }
+.hero-grid-layout { display: grid; grid-template-columns: 1fr; gap: 30px; align-items: center; }
+
+.hero-h1 { font-size: 2.15rem; line-height: 1.1; margin-bottom: 18px; }
+.hero-h1 .ln { display: block; }
+.hero-sub { color: var(--muted); font-size: 1.06rem; margin-bottom: 26px; max-width: 52ch; }
+.hero-cta-row { display: flex; flex-direction: column; gap: 14px; margin-bottom: 26px; }
+.hero-cta-row .btn-wa { width: 100%; }
+
+.trust-row { display: flex; flex-wrap: wrap; gap: 14px 20px; padding-top: 8px; border-top: 1px solid var(--border); }
+.trust-item { display: flex; align-items: center; gap: 9px; font-size: .82rem; color: var(--muted); }
+.trust-item svg { width: 20px; height: 20px; color: var(--gold); flex-shrink: 0; }
+.trust-item b { color: var(--text); font-weight: 700; }
+
+@media (min-width: 900px) {
+  .hero-grid-layout { grid-template-columns: 1fr; gap: 0; max-width: 860px; margin: 0 auto; text-align: center; }
+  .hero-h1 { font-size: 3.4rem; }
+  .hero-sub { margin-left: auto; margin-right: auto; }
+  .hero-cta-row { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+  .hero-cta-row .btn-wa { width: auto; }
+  .trust-row { justify-content: center; }
+  .hero-inner { padding: 90px 0 96px; }
+}
+
+/* ===================== STAT STRIP ===================== */
+.stat-strip { background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.stat-grid { display: grid; grid-template-columns: 1fr; gap: 1px; background: var(--border); }
+.stat-cell { background: var(--bg-2); padding: 26px 18px; text-align: center; }
+.stat-num { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 7px; }
+.stat-lbl { font-size: .76rem; color: var(--muted); letter-spacing: .04em; }
+@media (min-width: 768px) { .stat-grid { grid-template-columns: repeat(3, 1fr); } .stat-num { font-size: 2.4rem; } }
+
+/* ===================== PROBLEMA / SITUAÇÕES ===================== */
+.sit-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 34px; }
+.sit-card {
+  background: linear-gradient(165deg, var(--surface) 0%, var(--bg-2) 100%);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 24px 22px; position: relative; overflow: hidden;
+  transition: border-color .3s, transform .3s;
+}
+.sit-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0;
+  background: var(--grad-gold); transition: height .4s ease;
+}
+.sit-card:hover { border-color: var(--border-lt); transform: translateY(-3px); }
+.sit-card:hover::before { height: 100%; }
+.sit-ico { width: 46px; height: 46px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border-lt); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+.sit-ico svg { width: 24px; height: 24px; color: var(--gold); }
+.sit-card h3 { font-size: 1.08rem; margin-bottom: 9px; }
+.sit-card p { color: var(--muted); font-size: .94rem; }
+@media (min-width: 700px) { .sit-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1000px) { .sit-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ===================== MODALIDADES (tabs/cards) ===================== */
+.mod-grid { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 34px; }
+.mod-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 26px 22px; position: relative;
+  transition: transform .3s, box-shadow .3s, border-color .3s;
+}
+.mod-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--gold-dk); }
+.mod-num { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; font-weight: 700; color: var(--gold-dk); line-height: 1; opacity: .5; }
+.mod-card h3 { font-size: 1.14rem; margin: 10px 0; }
+.mod-card p { color: var(--muted); font-size: .92rem; }
+@media (min-width: 700px) { .mod-grid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1050px) { .mod-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ===================== PROCESSO (timeline) ===================== */
+.proc-wrap { margin-top: 38px; position: relative; }
+.proc-step { display: grid; grid-template-columns: auto 1fr; gap: 20px; padding-bottom: 34px; position: relative; }
+.proc-step:last-child { padding-bottom: 0; }
+.proc-line { position: absolute; left: 23px; top: 48px; bottom: -6px; width: 2px; background: linear-gradient(180deg, var(--gold-dk), var(--border)); }
+.proc-step:last-child .proc-line { display: none; }
+.proc-dot {
+  width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+  background: var(--surface-2); border: 1.5px solid var(--gold-dk);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; color: var(--gold-lt); font-size: 1.05rem; z-index: 2;
+}
+.proc-body { padding-top: 6px; }
+.proc-body h3 { font-size: 1.1rem; margin-bottom: 6px; }
+.proc-body p { color: var(--muted); font-size: .93rem; }
+
+/* ===================== AUTORIDADE ===================== */
+#autoridade { background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%); }
+.auth-layout { display: grid; grid-template-columns: 1fr; gap: 36px; align-items: center; }
+.auth-photo-wrap { position: relative; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-lt); }
+.auth-photo { width: 100%; display: block; }
+.auth-photo-wrap::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(7,10,20,.7) 100%); }
+.auth-points { display: grid; gap: 18px; margin-top: 26px; }
+.auth-point { display: grid; grid-template-columns: auto 1fr; gap: 15px; }
+.auth-check { width: 40px; height: 40px; border-radius: 11px; background: var(--surface-2); border: 1px solid var(--border-lt); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.auth-check svg { width: 21px; height: 21px; color: var(--gold); }
+.auth-point h3 { font-size: 1.02rem; margin-bottom: 3px; }
+.auth-point p { color: var(--muted); font-size: .9rem; }
+@media (min-width: 900px) { .auth-layout { grid-template-columns: .82fr 1.18fr; gap: 48px; } }
+
+/* ===================== FAIXA LEGAL (urgência real) ===================== */
+.legal-band { position: relative; overflow: hidden; border-radius: var(--radius-lg); border: 1px solid var(--gold-dk); background: linear-gradient(135deg, rgba(201,162,75,.08), rgba(7,10,20,.4)); padding: 34px 26px; }
+.legal-band .eyebrow { color: var(--gold-lt); }
+.legal-band h2 { font-size: 1.5rem; margin-bottom: 12px; }
+.legal-band p { color: var(--muted); font-size: .98rem; max-width: 64ch; }
+
+/* ===================== FAQ ===================== */
+.faq-list { margin-top: 34px; display: grid; gap: 12px; }
+.faq-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: border-color .3s; }
+.faq-item.open { border-color: var(--gold-dk); }
+.faq-q { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 20px 22px; cursor: pointer; font-weight: 700; font-size: 1rem; }
+.faq-q .ico { width: 26px; height: 26px; flex-shrink: 0; position: relative; transition: transform .3s; }
+.faq-q .ico::before, .faq-q .ico::after { content: ''; position: absolute; background: var(--gold); border-radius: 2px; transition: .3s; }
+.faq-q .ico::before { top: 12px; left: 5px; width: 16px; height: 2px; }
+.faq-q .ico::after { top: 5px; left: 12px; width: 2px; height: 16px; }
+.faq-item.open .ico::after { transform: rotate(90deg); opacity: 0; }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+.faq-a-inner { padding: 0 22px 22px; color: var(--muted); font-size: .94rem; }
+.faq-item.open .faq-a { max-height: 320px; }
+
+/* ===================== CTA FINAL ===================== */
+#cta-final { position: relative; overflow: hidden; }
+.cta-veil { position: absolute; inset: 0; z-index: 1; background: radial-gradient(80% 80% at 50% 50%, rgba(27,58,107,.4), rgba(7,10,20,.88)); }
+.cta-final-inner { position: relative; z-index: 3; text-align: center; padding: 30px 0; }
+.cta-final-inner h2 { font-size: 2rem; margin-bottom: 16px; }
+.cta-final-inner .lead { margin: 0 auto 30px; }
+.cta-final-inner .btn-wa { font-size: 1.05rem; padding: 19px 40px; }
+@media (min-width: 768px) { .cta-final-inner h2 { font-size: 2.6rem; } }
+
+/* ===================== FOOTER ===================== */
+footer { background: var(--bg); border-top: 1px solid var(--border); padding: 46px 0 30px; }
+.foot-grid { display: grid; grid-template-columns: 1fr; gap: 28px; }
+.foot-logo { height: 50px; width: auto; margin-bottom: 16px; opacity: .9; }
+.foot-col h4 { font-size: .82rem; text-transform: uppercase; letter-spacing: .12em; color: var(--gold); margin-bottom: 14px; }
+.foot-col p, .foot-col a { color: var(--muted); font-size: .9rem; margin-bottom: 8px; display: block; }
+.foot-col a:hover { color: var(--gold-lt); }
+.foot-contact-item { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 12px; }
+.foot-contact-item svg { width: 18px; height: 18px; color: var(--gold); flex-shrink: 0; margin-top: 2px; }
+.foot-bottom { border-top: 1px solid var(--border); margin-top: 30px; padding-top: 22px; text-align: center; }
+.foot-bottom p { color: var(--muted-2); font-size: .78rem; line-height: 1.7; }
+.foot-disclaimer { max-width: 70ch; margin: 0 auto 12px; }
+@media (min-width: 700px) { .foot-grid { grid-template-columns: 1.4fr 1fr 1fr; } }
+
+/* ===================== STICKY MOBILE CTA ===================== */
+#stickyCta {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 950;
+  background: rgba(7,10,20,.94); backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border); padding: 12px 16px;
+  transform: translateY(100%); transition: transform .4s cubic-bezier(.22,1,.36,1);
+}
+#stickyCta .btn-wa { width: 100%; padding: 14px; font-size: .92rem; box-shadow: none; }
+@media (min-width: 900px) { #stickyCta { display: none; } }
+
+/* ===================== FLOATING WA (desktop) ===================== */
+.floating-wa { position: fixed; bottom: 26px; right: 26px; width: 60px; height: 60px; background: var(--whatsapp); border-radius: 50%; display: none; align-items: center; justify-content: center; box-shadow: 0 6px 22px rgba(37,211,102,.45); z-index: 940; transition: transform .3s; animation: pulse 2.4s infinite; }
+.floating-wa:hover { transform: scale(1.08); }
+.floating-wa svg { width: 32px; height: 32px; }
+@keyframes pulse { 0% { box-shadow: 0 6px 22px rgba(37,211,102,.45), 0 0 0 0 rgba(37,211,102,.5); } 70% { box-shadow: 0 6px 22px rgba(37,211,102,.45), 0 0 0 16px rgba(37,211,102,0); } 100% { box-shadow: 0 6px 22px rgba(37,211,102,.45), 0 0 0 0 rgba(37,211,102,0); } }
+@media (min-width: 900px) { .floating-wa { display: flex; } }
+
+/* ===================== ANCORAS ===================== */
+/* A topbar e sticky: sem isto, um link para #processo (sitelink de campanha,
+   por exemplo) deixa o titulo da secao escondido atras dela. */
+section[id], header[id], footer[id] { scroll-margin-top: 76px; }
+
+/* ===================== FORMULÁRIO ===================== */
+.form-layout { display: grid; grid-template-columns: 1fr; gap: clamp(30px,4vw,56px); align-items: start; }
+@media (min-width: 880px) { .form-layout { grid-template-columns: 1fr 1.05fr; } }
+.form-notas { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--border); }
+.form-notas p { color: var(--muted-2); font-size: .9rem; margin-bottom: 8px; }
+.form-notas b { color: var(--muted); }
+
+.ncm-form {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: clamp(22px,3.4vw,36px);
+  display: flex; flex-direction: column; gap: 17px; box-shadow: var(--shadow);
+}
+.campo { display: flex; flex-direction: column; gap: 7px; }
+.campo label { font-size: .72rem; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; color: var(--gold); line-height: 1.5; }
+.campo input, .campo select {
+  width: 100%; background: var(--surface-2);
+  border: 1px solid var(--border-lt); border-radius: 10px;
+  padding: 14px 15px; font-family: inherit; font-size: 1rem; color: var(--text);
+  transition: border-color .2s;
+}
+.campo input::placeholder { color: var(--muted-2); }
+.campo input:focus, .campo select:focus { outline: none; border-color: var(--gold); }
+/* O formulário é novalidate — a validação é a do script. :invalid aqui serve só
+   para deixar o "Selecione" com cara de placeholder até haver escolha. */
+.campo select:invalid { color: var(--muted-2); }
+.campo select {
+  appearance: none; -webkit-appearance: none; padding-right: 42px; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, var(--gold) 50%), linear-gradient(135deg, var(--gold) 50%, transparent 50%);
+  background-position: calc(100% - 21px) 22px, calc(100% - 15px) 22px;
+  background-size: 6px 6px, 6px 6px; background-repeat: no-repeat;
+}
+.campo select option { background: var(--surface-2); color: var(--text); }
+.ncm-form [aria-invalid="true"] { border-color: #f0a9a9; }
+.campo .erro { font-size: .8rem; color: #f0a9a9; }
+.ncm-form .btn-wa { width: 100%; border: none; cursor: pointer; margin-top: 4px; }
+.ncm-form .btn-wa:disabled { opacity: .65; cursor: progress; transform: none; }
+.form-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form-privacidade { font-size: .78rem; line-height: 1.7; color: var(--muted-2); }
+.form-privacidade a { color: var(--muted); text-decoration: underline; }
+</style>
+<noscript><style>.reveal { opacity: 1; transform: none; }</style></noscript>
+<script>window.NCM_CONFIG={"gadsTag":"AW-18397512561","conversionSendTo":"AW-18397512561/-YUXCL_TneccEPGGz8RE","whatsapp":"5511910144241"};</script>
+<script src="/assets/ncm-tag.js"></script>
+<link rel="canonical" href="https://ncm.adv.br/usucapiao">
+</head>
+<body>
+<div id="lp-wrapper">
+
+<!-- PROGRESS BAR -->
+<div id="progressBar"></div>
+
+<!-- TOPBAR -->
+<header class="topbar" id="topo">
+  <div class="topbar-inner">
+    <img id="logoTop" class="topbar-logo" alt="NCM Advogados" loading="eager" src="/assets/usucapiao/a1f7c0d2-3b64-4e18-9c07-5d2ea8b41f36.png">
+    <a class="topbar-cta" href="https://wa.me/5511910144241?text=Ol%C3%A1%2C%20preciso%20regularizar/atualizar%20a%20documenta%C3%A7%C3%A3o%20de%20um%20im%C3%B3vel%2C%20pode%20me%20ajudar%3F" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"></path><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+      <span class="lbl-full">Falar no WhatsApp</span>
+      <span class="lbl-short">WhatsApp</span>
+    </a>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero">
+  <svg class="hero-grid" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" viewBox="0 0 1200 800">
+    <defs>
+      <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+        <path d="M48 0H0V48" fill="none" stroke="#c9a24b" stroke-width="0.5" opacity="0.18"></path>
+      </pattern>
+      <radialGradient id="gridfade" cx="50%" cy="40%" r="70%">
+        <stop offset="0%" stop-color="#fff" stop-opacity="1"></stop>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"></stop>
+      </radialGradient>
+      <mask id="gridmask"><rect width="1200" height="800" fill="url(#gridfade)"></rect></mask>
+    </defs>
+    <rect width="1200" height="800" fill="url(#grid)" mask="url(#gridmask)"></rect>
+  </svg>
+  <div class="hero-veil"></div>
+
+  <div class="wrap hero-inner">
+    <div class="hero-grid-layout">
+      <div class="hero-copy reveal">
+        <span class="eyebrow">NCM Advogados · Direito Imobiliário e Patrimonial</span>
+        <h1 class="hero-h1">
+          <span class="ln">Advogado com atuação em</span>
+          <span class="ln gold-text serif" style="font-weight:700;">Usucapião</span>
+          <span class="ln">e regularização de imóveis</span>
+        </h1>
+        <p class="hero-sub">Regularize a documentação do seu imóvel pela
+ via legal. Atuação em usucapião rural, urbana e de 
+imóveis sem inventário — para todo o Centro-Sul do Brasil.</p>
+        <div class="hero-cta-row">
+          <a class="btn-wa" href="https://wa.me/5511910144241?text=Ol%C3%A1%2C%20preciso%20regularizar/atualizar%20a%20documenta%C3%A7%C3%A3o%20de%20um%20im%C3%B3vel%2C%20pode%20me%20ajudar%3F" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"></path><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+            Falar com o escritório
+          </a>
+        </div>
+        <div class="trust-row">
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.4 8.5-8 10-4.6-1.5-8-5-8-10V6l8-4z" stroke-linejoin="round"></path><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <span><b>OAB/SP</b> · Atuação regular</span>
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2" stroke-linecap="round"></path></svg>
+            <span><b>+15 anos</b> em direito imobiliário</span>
+          </div>
+          <div class="trust-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            <span><b>Via extrajudicial</b> quando cabível</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STAT STRIP ===================== -->
+<section id="stat-strip" class="stat-strip">
+  <div class="wrap">
+    <div class="stat-grid">
+      <div class="stat-cell reveal">
+        <div class="stat-num gold-text">+15</div>
+        <div class="stat-lbl">Anos de experiência</div>
+      </div>
+      <div class="stat-cell reveal d1">
+        <div class="stat-num gold-text">3</div>
+        <div class="stat-lbl">Modalidades de usucapião</div>
+      </div>
+      <div class="stat-cell reveal d2">
+        <div class="stat-num gold-text">100%</div>
+        <div class="stat-lbl">Foco em regularização</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SITUAÇÕES (Problema/Empatia) ===================== -->
+<section class="section" id="situacoes">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch;">
+      <span class="eyebrow">Seu caso pode ser um destes</span>
+      <h2 class="h2">Quando o imóvel é seu, mas o papel não diz isso</h2>
+      <p class="lead">Muita gente usa, cuida e paga as contas de um 
+imóvel há anos — mas, no cartório, a propriedade nunca foi colocada no 
+nome certo. Veja se alguma destas situações é parecida com a sua.</p>
+    </div>
+
+    <div class="sit-grid">
+      <div class="sit-card reveal">
+        <div class="sit-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M4 21V9l8-6 8 6v12M9 21v-6h6v6" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        <h3>Fazenda comprada no aperto de mão</h3>
+        <p>A terra produz, está com a família há décadas, mas a matrícula nunca foi aberta ou nunca saiu do nome do antigo dono.</p>
+      </div>
+      <div class="sit-card reveal d1">
+        <div class="sit-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h4" stroke-linecap="round"></path></svg></div>
+        <h3>Imóvel de falecido sem inventário</h3>
+        <p>O pai, a mãe ou um parente faleceu, o imóvel continua com a 
+família, mas o inventário nunca foi feito e a propriedade ficou travada.</p>
+      </div>
+      <div class="sit-card reveal d2">
+        <div class="sit-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z" stroke-linejoin="round"></path><path d="M12 12v9M3 7.5l9 4.5 9-4.5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+        <h3>Escritura que nunca foi registrada</h3>
+        <p>Você tem contrato, recibo ou escritura — mas o cartório diz que isso sozinho não basta para colocar o imóvel no seu nome.</p>
+      </div>
+      <div class="sit-card reveal">
+        <div class="sit-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke-linecap="round"></path><path d="M16 4l5 5M21 4l-5 5" stroke-linecap="round"></path></svg></div>
+        <h3>Imóvel no nome de quem você não localiza</h3>
+        <p>A matrícula está em nome de uma pessoa que ninguém encontra mais — e isso impede a venda, a garantia ou a transmissão.</p>
+      </div>
+      <div class="sit-card reveal d1">
+        <div class="sit-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8" width="18" height="12" rx="2"></rect><path d="M7 8V6a5 5 0 0110 0v2M12 13v3" stroke-linecap="round"></path></svg></div>
+        <h3>Empresa em imóvel próprio não registrado</h3>
+        <p>A empresa ocupa o galpão ou a sede há muitos anos, mas o imóvel nunca entrou formalmente no patrimônio dela.</p>
+      </div>
+      <div class="sit-card reveal d2">
+        <div class="sit-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 10l8-6 8 6M6 9v11h12V9" stroke-linecap="round" stroke-linejoin="round"></path><path d="M10 20v-5h4v5" stroke-linecap="round"></path></svg></div>
+        <h3>Loteamento com problema no registro</h3>
+        <p>Você comprou de boa-fé, paga IPTU há anos, mas o loteamento tinha um defeito registral lá atrás que travou tudo.</p>
+      </div>
+    </div>
+
+    <div class="reveal d2" style="margin-top:36px; text-align:center;">
+      <a class="btn-wa" href="https://wa.me/5511910144241?text=Ol%C3%A1%2C%20preciso%20regularizar/atualizar%20a%20documenta%C3%A7%C3%A3o%20de%20um%20im%C3%B3vel%2C%20pode%20me%20ajudar%3F" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"></path><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+        Me identifiquei com uma situação. Quero falar
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MODALIDADES ===================== -->
+<section class="section" id="modalidades" style="background:linear-gradient(180deg,var(--bg) 0%, var(--bg-2) 100%);">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch;">
+      <span class="eyebrow">Entenda o caminho</span>
+      <h2 class="h2">A usucapião reconhece o que já é seu na prática</h2>
+      <p class="lead">Usucapião é o direito de ter a propriedade 
+reconhecida quando você tem a posse de um imóvel por tempo prolongado, 
+de forma pacífica e como dono. Existem caminhos diferentes conforme o 
+seu caso.</p>
+    </div>
+
+    <div class="mod-grid">
+      <div class="mod-card reveal">
+        <div class="mod-num">01</div>
+        <h3>Usucapião Rural</h3>
+        <p>Para quem ocupa e produz em área rural por anos. Pode 
+reconhecer a propriedade da terra usada pela família, mesmo sem registro
+ formal no cartório.</p>
+      </div>
+      <div class="mod-card reveal d1">
+        <div class="mod-num">02</div>
+        <h3>Usucapião Urbana</h3>
+        <p>Para imóveis na cidade — casa, apartamento, terreno, ponto 
+comercial — ocupados de forma contínua e sem disputa por período 
+prolongado.</p>
+      </div>
+      <div class="mod-card reveal d2">
+        <div class="mod-num">03</div>
+        <h3>Usucapião Extrajudicial</h3>
+        <p>Em muitos casos, hoje o procedimento corre direto no cartório
+ de registro de imóveis, sem ação judicial — com mais previsibilidade de
+ prazo.</p>
+      </div>
+    </div>
+
+    <div class="reveal d1" style="margin-top:28px; padding:22px 24px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); display:flex; gap:14px; align-items:flex-start;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#c9a24b" stroke-width="1.8" style="width:26px;height:26px;flex-shrink:0;margin-top:2px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 8h.01M11 12h1v4h1" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      <p style="color:var(--muted); font-size:.95rem;">Qual caminho se 
+aplica ao seu imóvel depende de detalhes do seu caso — tempo de posse, 
+documentos que você tem e situação da matrícula. Essa análise é o 
+primeiro passo do atendimento.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PROCESSO ===================== -->
+<section class="section" id="processo">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch;">
+      <span class="eyebrow">Como funciona o atendimento</span>
+      <h2 class="h2">Um caminho claro, do diagnóstico à regularização</h2>
+      <p class="lead">Você não precisa entender de lei para começar. 
+Precisa de alguém que organize a situação e mostre o caminho certo para o
+ seu caso.</p>
+    </div>
+
+    <div class="proc-wrap">
+      <div class="proc-step reveal">
+        <div class="proc-dot">1</div><div class="proc-line"></div>
+        <div class="proc-body">
+          <h3>Conversa inicial pelo WhatsApp</h3>
+          <p>Você conta a situação do imóvel. De forma simples, 
+entendemos o que existe hoje: documentos, tempo de posse e o que está 
+travando a regularização.</p>
+        </div>
+      </div>
+      <div class="proc-step reveal d1">
+        <div class="proc-dot">2</div><div class="proc-line"></div>
+        <div class="proc-body">
+          <h3>Análise técnica do seu caso</h3>
+          <p>Avaliamos qual modalidade de usucapião se aplica e se o 
+caminho extrajudicial (em cartório) é possível para a sua situação 
+específica.</p>
+        </div>
+      </div>
+      <div class="proc-step reveal d2">
+        <div class="proc-dot">3</div><div class="proc-line"></div>
+        <div class="proc-body">
+          <h3>Plano de regularização</h3>
+          <p>Você recebe a orientação sobre os próximos passos, os 
+documentos necessários e como o processo será conduzido — com 
+previsibilidade.</p>
+        </div>
+      </div>
+      <div class="proc-step reveal d3">
+        <div class="proc-dot">4</div>
+        <div class="proc-body">
+          <h3>Acompanhamento até o registro</h3>
+          <p>Conduzimos o procedimento com foco em colocar o imóvel no nome certo, na matrícula, de forma definitiva e segura.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== AUTORIDADE ===================== -->
+<section class="section" id="autoridade">
+  <div class="wrap">
+    <div class="auth-layout">
+      <div class="auth-photo-wrap reveal">
+        <img id="authPhoto" class="auth-photo" alt="Sócios do NCM Advogados" decoding="async" src="/assets/usucapiao/b8e34a51-7c29-4d60-8f13-6a95c2d70e4b.jpg">
+      </div>
+      <div class="auth-copy reveal d1">
+        <span class="eyebrow">Por que o NCM Advogados</span>
+        <h2 class="h2">Direito imobiliário e patrimonial é o nosso terreno</h2>
+        <p class="lead" style="margin-bottom:6px;">O NCM — Nunes 
+Collares Miguel Advogados atua na regularização de imóveis e na 
+organização de patrimônio para famílias, produtores rurais e empresas em
+ todo o Centro-Sul do Brasil.</p>
+
+        <div class="auth-points">
+          <div class="auth-point">
+            <div class="auth-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+            <div><h3>Foco em usucapião e regularização</h3><p>Não somos generalistas. Trabalhamos especificamente com a regularização de imóveis e suas modalidades.</p></div>
+          </div>
+          <div class="auth-point">
+            <div class="auth-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+            <div><h3>Experiência com casos do agro e patrimoniais</h3><p>Entendemos a realidade de quem tem terra, imóvel de família ou patrimônio que precisa ser organizado.</p></div>
+          </div>
+          <div class="auth-point">
+            <div class="auth-check"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
+            <div><h3>Caminho extrajudicial sempre que possível</h3><p>Buscamos a via mais rápida e previsível para o seu caso, evitando anos de processo quando há alternativa em cartório.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAIXA LEGAL (urgência real) ===================== -->
+<section class="section-sm" id="faixa-legal">
+  <div class="wrap">
+    <div class="legal-band reveal">
+      <span class="eyebrow">Por que vale resolver agora</span>
+      <h2 class="serif">Regras mudaram e o tempo conta a seu favor — até certo ponto</h2>
+      <p>A Lei 14.382/2022 tornou a usucapião em cartório mais ágil, e o
+ Decreto 12.689/2025 fixou novos prazos para o georreferenciamento de 
+imóveis rurais. Cada ano de posse fortalece o seu direito, mas 
+pendências de registro tendem a ficar mais complexas com o tempo — 
+especialmente quando envolvem herança, venda ou acesso a crédito. 
+Entender sua situação cedo evita que um problema simples vire um 
+problema caro.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch;">
+      <span class="eyebrow">Dúvidas frequentes</span>
+      <h2 class="h2">O que as pessoas perguntam antes de começar</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <div class="faq-q">Quanto tempo demora uma usucapião? <span class="ico"></span></div>
+        <div class="faq-a"><div class="faq-a-inner">Depende do caso e do
+ caminho. Quando é possível fazer pela via extrajudicial, em cartório, o
+ prazo costuma ser bem menor do que o de um processo judicial. Na 
+análise inicial, conseguimos dar uma estimativa mais realista para a sua
+ situação.</div></div>
+      </div>
+      <div class="faq-item reveal d1">
+        <div class="faq-q">Preciso ir presencialmente ao escritório? <span class="ico"></span></div>
+        <div class="faq-a"><div class="faq-a-inner">Não necessariamente.
+ O atendimento começa pelo WhatsApp e boa parte do acompanhamento pode 
+ser feita a distância. Como atendemos todo o Centro-Sul, organizamos o 
+processo de forma a facilitar para quem está em outra cidade.</div></div>
+      </div>
+      <div class="faq-item reveal d2">
+        <div class="faq-q">Quais documentos eu preciso ter? <span class="ico"></span></div>
+        <div class="faq-a"><div class="faq-a-inner">Varia conforme o 
+imóvel. Em geral, ajuda ter qualquer comprovante de posse (contas, 
+contrato, recibo, escritura) e dados sobre há quanto tempo o imóvel é 
+usado. Você não precisa organizar nada sozinho — orientamos exatamente o
+ que reunir.</div></div>
+      </div>
+      <div class="faq-item reveal">
+        <div class="faq-q">Tenho só um contrato de gaveta. Dá para regularizar? <span class="ico"></span></div>
+        <div class="faq-a"><div class="faq-a-inner">Em muitos casos, 
+sim. A usucapião existe justamente para situações em que o documento que
+ você tem não é suficiente para abrir ou transferir a matrícula. A posse
+ prolongada e pacífica é o que costuma sustentar o direito.</div></div>
+      </div>
+      <div class="faq-item reveal d1">
+        <div class="faq-q">Qual a diferença entre via judicial e extrajudicial? <span class="ico"></span></div>
+        <div class="faq-a"><div class="faq-a-inner">Na via 
+extrajudicial, o procedimento corre diretamente no cartório de registro 
+de imóveis, costuma ser mais rápido e previsível. A via judicial é 
+necessária em casos com disputa ou impugnação fundamentada. Avaliamos 
+qual se aplica ao seu caso logo no início.</div></div>
+      </div>
+      <div class="faq-item reveal d2">
+        <div class="faq-q">Como funciona a primeira conversa? <span class="ico"></span></div>
+        <div class="faq-a"><div class="faq-a-inner">É simples e sem 
+compromisso. Você clica no botão do WhatsApp, conta a situação do seu 
+imóvel e tira suas primeiras dúvidas com um advogado do escritório. A partir daí, 
+explicamos os próximos passos.</div></div>
+      </div>
+    </div>
+    <div class="reveal d1" style="margin-top:30px; text-align:center;">
+      <a class="btn-wa" href="https://wa.me/5511910144241?text=Ol%C3%A1%2C%20preciso%20regularizar/atualizar%20a%20documenta%C3%A7%C3%A3o%20de%20um%20im%C3%B3vel%2C%20pode%20me%20ajudar%3F" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"></path><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+        Ainda tem dúvidas? Fale com o escritório
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTATO ===================== -->
+<section class="section" id="contato">
+  <div class="wrap">
+    <div class="form-layout">
+      <div class="reveal">
+        <span class="eyebrow">Fale com o escritório</span>
+        <h2 class="h2">Quatro informações e a conversa já começa no ponto certo</h2>
+        <p class="lead">Usucapião não é um caminho só, e o que define qual se
+ aplica ao seu imóvel é o tipo de área somado ao tempo de posse. Com essas duas
+ respostas a análise já começa — o resto, como os documentos que você tem e a
+ situação da matrícula, levantamos na conversa.</p>
+        <div class="form-notas">
+          <p><b>Sem custo e sem compromisso.</b> A primeira conversa serve para entender a situação e dizer se existe caminho.</p>
+          <p>Se preferir, escreva direto no WhatsApp por qualquer botão desta página — o formulário só adianta o diagnóstico.</p>
+        </div>
+      </div>
+
+      <form class="ncm-form reveal d1" id="ncm-form" novalidate>
+        <div class="campo">
+          <label for="ncm-nome">Seu nome</label>
+          <input id="ncm-nome" name="nome" type="text" autocomplete="name" placeholder="Nome e sobrenome" aria-invalid="false" aria-describedby="err-nome">
+          <p class="erro" role="alert" hidden id="err-nome">Informe seu nome.</p>
+        </div>
+
+        <div class="campo">
+          <label for="ncm-tel">WhatsApp (com DDD)</label>
+          <input id="ncm-tel" name="telefone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(11) 90000-0000" aria-invalid="false" aria-describedby="err-tel">
+          <p class="erro" role="alert" hidden id="err-tel">Informe um número com DDD.</p>
+        </div>
+
+        <div class="campo">
+          <label for="ncm-imovel">Que tipo de imóvel é?</label>
+          <select id="ncm-imovel" name="imovel" required aria-invalid="false" aria-describedby="err-imovel">
+            <option value="" disabled selected>Selecione</option>
+            <option value="Rural — fazenda, sítio, chácara">Rural — fazenda, sítio, chácara</option>
+            <option value="Urbano residencial — casa, apartamento, terreno">Urbano residencial — casa, apartamento, terreno</option>
+            <option value="Urbano comercial — loja, galpão, sala, ponto">Urbano comercial — loja, galpão, sala, ponto</option>
+            <option value="Mais de um imóvel">Mais de um imóvel</option>
+          </select>
+          <p class="erro" role="alert" hidden id="err-imovel">Selecione uma opção.</p>
+        </div>
+
+        <div class="campo">
+          <label for="ncm-posse">Há quanto tempo o imóvel é usado por você ou pela sua família?</label>
+          <select id="ncm-posse" name="posse" required aria-invalid="false" aria-describedby="err-posse">
+            <option value="" disabled selected>Selecione</option>
+            <option value="Menos de 5 anos">Menos de 5 anos</option>
+            <option value="Entre 5 e 10 anos">Entre 5 e 10 anos</option>
+            <option value="Entre 10 e 15 anos">Entre 10 e 15 anos</option>
+            <option value="Mais de 15 anos">Mais de 15 anos</option>
+            <option value="Não sei dizer com precisão">Não sei dizer com precisão</option>
+          </select>
+          <p class="erro" role="alert" hidden id="err-posse">Selecione uma opção.</p>
+        </div>
+
+        <div class="form-hp" aria-hidden="true">
+          <label for="ncm-site">Não preencher</label>
+          <input id="ncm-site" name="site" type="text" tabindex="-1" autocomplete="off">
+        </div>
+
+        <button class="btn-wa" type="submit">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"></path><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+          Enviar e falar no WhatsApp
+        </button>
+        <p class="form-privacidade">Seus dados são registrados e tratados para retornar o contato, conforme a LGPD, e o telefone pode ser compartilhado em formato irreversível (hash) apenas para medir a eficácia dos nossos anúncios. Acesso, correção ou exclusão em privacidade@ncm.adv.br · <a href="/privacidade">Política de privacidade</a>. O envio não cria, por si só, relação entre advogado e cliente.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA FINAL ===================== -->
+<section id="cta-final">
+  <div class="cta-veil"></div>
+  <div class="wrap cta-final-inner reveal">
+    <span class="eyebrow" style="justify-content:center;">NCM Advogados</span>
+    <h2 class="serif">Não deixe a regularização do seu imóvel para depois</h2>
+    <p class="lead">Fale com um advogado do escritório e entenda, sem
+ compromisso, o caminho para colocar o seu imóvel no nome certo.</p>
+    <a class="btn-wa" href="https://wa.me/5511910144241?text=Ol%C3%A1%2C%20preciso%20regularizar/atualizar%20a%20documenta%C3%A7%C3%A3o%20de%20um%20im%C3%B3vel%2C%20pode%20me%20ajudar%3F" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"></path><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+      Falar com o escritório
+    </a>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer id="rodape">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <img id="logoFoot" class="foot-logo" alt="NCM Advogados" src="/assets/usucapiao/a1f7c0d2-3b64-4e18-9c07-5d2ea8b41f36.png">
+        <p style="max-width:42ch;">Nunes Collares Miguel Advogados. 
+Atuação em direito imobiliário e patrimonial, com foco em regularização 
+de imóveis e usucapião para todo o Centro-Sul do Brasil.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Contato</h4>
+        <div class="foot-contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 6-9 12-9 12s-9-6-9-12a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span>Av. Marquês de S. Vicente, 1619 — Sala 505<br>Barra Funda, São Paulo - SP, 01139-003</span>
+        </div>
+        <div class="foot-contact-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6" stroke-linecap="round"></path></svg>
+          <a href="mailto:contato@ncm.adv.br">contato@ncm.adv.br</a>
+        </div>
+        <div class="foot-contact-item">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+          <a href="https://wa.me/5511910144241?text=Ol%C3%A1%2C%20preciso%20regularizar/atualizar%20a%20documenta%C3%A7%C3%A3o%20de%20um%20im%C3%B3vel%2C%20pode%20me%20ajudar%3F" target="_blank" rel="noopener">Atendimento via WhatsApp</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Atendimento</h4>
+        <p>Segunda a sexta</p>
+        <p>Regiões: todo o Centro-Sul do Brasil</p>
+        <p style="margin-top:10px;">Áreas: Usucapião rural, urbana, extrajudicial e regularização de imóveis</p>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p style="max-width:70ch;margin:0 auto 12px;">Leandro Nunes — OAB/SP nº 338.331 · Leonardo da Costa Almeida Collares Miguel — OAB/SP nº 523.685 · Leandro Nunes Sociedade Individual de Advocacia — OAB/SP nº 46.570</p>
+      <p class="foot-disclaimer">Este conteúdo tem caráter meramente 
+informativo, em conformidade com o Provimento nº 205/2021 da OAB, e não 
+constitui oferta, promessa de resultado ou captação de clientela. Cada 
+caso é analisado individualmente. Os resultados dependem das 
+particularidades de cada situação.</p>
+      <p>© NCM — Nunes Collares Miguel Advogados. Todos os direitos 
+reservados. · Respeitamos a sua privacidade conforme a LGPD (Lei nº 
+13.709/2018): os dados informados são usados apenas para o seu 
+atendimento.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== STICKY MOBILE CTA ===================== -->
+<div id="stickyCta">
+  <a class="btn-wa" href="https://wa.me/5511910144241?text=Ol%C3%A1%2C%20preciso%20regularizar/atualizar%20a%20documenta%C3%A7%C3%A3o%20de%20um%20im%C3%B3vel%2C%20pode%20me%20ajudar%3F" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"></path><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+    Falar com o escritório
+  </a>
+</div>
+
+<!-- ===================== FLOATING WA (desktop) ===================== -->
+<a class="floating-wa" href="https://wa.me/5511910144241?text=Ol%C3%A1%2C%20preciso%20regularizar/atualizar%20a%20documenta%C3%A7%C3%A3o%20de%20um%20im%C3%B3vel%2C%20pode%20me%20ajudar%3F" target="_blank" rel="noopener" aria-label="WhatsApp">
+  <svg viewBox="0 0 24 24" fill="#fff"><path d="M17.5 14.4c-.3-.2-1.7-.9-2-1-.3-.1-.5-.1-.6.2-.2.3-.7.9-.8 1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.5.1-.6.1-.1.3-.3.4-.5.1-.1.2-.3.3-.4.1-.2 0-.4 0-.5 0-.1-.6-1.5-.9-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3z"></path><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.4 1.3 4.9L2 22l5.3-1.4c1.4.8 3 1.2 4.7 1.2 5.5 0 10-4.5 10-10S17.5 2 12 2zm0 18c-1.5 0-3-.4-4.2-1.2l-.3-.2-3.1.8.8-3-.2-.3C4.4 14.9 4 13.5 4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8z"></path></svg>
+</a>
+
+</div><!-- /#lp-wrapper -->
+
+<script>
+(function(){
+  // ---------- CONVERSÃO (Google Ads) ----------
+  var CONVERSAO_ID = "usuc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
+
+  function converter(){
+    var CFG = window.NCM_CONFIG || {};
+    if (!CFG.conversionSendTo || typeof window.gtag !== "function") return;
+    window.gtag("event", "conversion", {
+      send_to: CFG.conversionSendTo,
+      transaction_id: CONVERSAO_ID
+    });
+  }
+
+  // ---------- RASTREAMENTO GTM/GA4 — CLIQUES WHATSAPP POR SEÇÃO ----------
+  function ctaLocation(el){
+    if(el.closest(".floating-wa"))            return "Botao Flutuante";
+    if(el.closest("#stickyCta"))              return "CTA Fixo Mobile";
+    if(el.closest(".topbar"))                 return "Topo";
+    var sec = el.closest("section, footer");
+    if(!sec) return "Outro";
+    var map = {
+      "hero":"Hero", "stat-strip":"Numeros", "situacoes":"Situacoes",
+      "modalidades":"Modalidades", "processo":"Processo", "autoridade":"Autoridade",
+      "faixa-legal":"Faixa Legal", "faq":"FAQ", "cta-final":"CTA Final"
+    };
+    if(sec.tagName && sec.tagName.toLowerCase() === "footer") return "Rodape";
+    return map[sec.id] || "Outro";
+  }
+  function initWaTracking(){
+    var links = document.querySelectorAll('a[href*="wa.me"],a[href*="whatsapp"]');
+    links.forEach(function(a){
+      a.addEventListener("click", function(){
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          event: "whatsapp_click",
+          cta_location: ctaLocation(a),
+          page_service: "Usucapiao"
+        });
+
+        // Vale como conversão junto com o formulário: a maioria dos visitantes
+        // vai pelo botão e nunca chega a preencher nada. O transaction_id
+        // impede que quem faz as duas coisas conte duas vezes.
+        converter();
+      });
+    });
+  }
+
+  // ---------- PROGRESS BAR ----------
+  function onScroll(){
+    var st = document.documentElement.scrollTop || document.body.scrollTop;
+    var sh = (document.documentElement.scrollHeight - window.innerHeight) || 1;
+    var bar = document.getElementById("progressBar");
+    if(bar) bar.style.width = ((st/sh)*100) + "%";
+  }
+
+  // ---------- SCROLL REVEAL ----------
+  function initReveal(){
+    var els = document.querySelectorAll(".reveal");
+    if(!("IntersectionObserver" in window)){ els.forEach(function(e){e.classList.add("visible");}); return; }
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("visible"); obs.unobserve(en.target);} });
+    }, { threshold: 0.12 });
+    els.forEach(function(e){ obs.observe(e); });
+  }
+
+  // ---------- FAQ ACCORDION ----------
+  function initFaq(){
+    document.querySelectorAll(".faq-q").forEach(function(q){
+      q.addEventListener("click", function(){
+        var item = q.parentElement;
+        var open = item.classList.contains("open");
+        document.querySelectorAll(".faq-item").forEach(function(it){ it.classList.remove("open"); });
+        if(!open) item.classList.add("open");
+      });
+    });
+  }
+
+  // ---------- STICKY MOBILE CTA (aparece após o hero) ----------
+  function initSticky(){
+    var hero = document.getElementById("hero");
+    var sticky = document.getElementById("stickyCta");
+    if(!hero || !sticky || !("IntersectionObserver" in window)) return;
+    var obs = new IntersectionObserver(function(e){
+      sticky.style.transform = e[0].isIntersecting ? "translateY(100%)" : "translateY(0)";
+    }, { threshold: 0 });
+    obs.observe(hero);
+  }
+
+  // ---------- FORMULÁRIO DE TRIAGEM ----------
+  function mascaraTelefone(v){
+    var d = (v || "").replace(/\D/g, "").slice(0, 11);
+    if(!d) return "";
+    if(d.length <= 2)  return "(" + d;
+    if(d.length <= 6)  return "(" + d.slice(0,2) + ") " + d.slice(2);
+    if(d.length <= 10) return "(" + d.slice(0,2) + ") " + d.slice(2,6) + "-" + d.slice(6);
+    return "(" + d.slice(0,2) + ") " + d.slice(2,7) + "-" + d.slice(7);
+  }
+
+  function initForm(){
+    var form = document.getElementById("ncm-form");
+    if(!form) return;
+
+    var nome = document.getElementById("ncm-nome");
+    var tel  = document.getElementById("ncm-tel");
+    var hp   = document.getElementById("ncm-site");
+
+    // Rótulo curto -> o que vai na mensagem do WhatsApp e no lead.
+    var perguntas = [
+      { el: document.getElementById("ncm-imovel"), erro: "err-imovel", chave: "tipo_imovel", rotulo: "Imóvel" },
+      { el: document.getElementById("ncm-posse"),  erro: "err-posse",  chave: "tempo_posse", rotulo: "Tempo de posse" }
+    ];
+
+    tel.addEventListener("input", function(){ tel.value = mascaraTelefone(tel.value); });
+
+    function marcar(campo, idErro, ruim){
+      campo.setAttribute("aria-invalid", ruim ? "true" : "false");
+      document.getElementById(idErro).hidden = !ruim;
+    }
+
+    form.addEventListener("submit", function(ev){
+      ev.preventDefault();
+
+      var digitos = tel.value.replace(/\D/g, "");
+      var ruimNome = !nome.value.trim();
+      var ruimTel  = digitos.length < 10 || digitos.length > 11;
+
+      marcar(nome, "err-nome", ruimNome);
+      marcar(tel, "err-tel", ruimTel);
+
+      var ordem = [[nome, ruimNome], [tel, ruimTel]];
+      perguntas.forEach(function(p){
+        var ruim = !p.el.value;
+        marcar(p.el, p.erro, ruim);
+        ordem.push([p.el, ruim]);
+      });
+
+      for(var i = 0; i < ordem.length; i++){
+        if(ordem[i][1]){ ordem[i][0].focus(); return; }
+      }
+
+      // Aba aberta agora, ainda dentro do gesto do clique.
+      var aba = window.open("", "_blank");
+
+      var botao = form.querySelector("button[type=submit]");
+      var rotulo = botao ? botao.innerHTML : null;
+      if(botao){ botao.disabled = true; botao.textContent = "Enviando\u2026"; }
+
+      var triagem = {};
+      perguntas.forEach(function(p){ triagem[p.chave] = p.el.value; });
+
+      var pronto = false;
+      function irParaWhatsApp(){
+        if(pronto) return;
+        pronto = true;
+        if(botao){ botao.disabled = false; botao.innerHTML = rotulo; }
+
+        // A mensagem leva só o que o escritório não teria de outro jeito. Fora:
+        // o telefone (a mensagem chega justamente dele) e o protocolo (código
+        // burocrático para quem está do outro lado). Os dois seguem no corpo do
+        // lead para o Lexia, que é onde fazem falta.
+        var linhas = ["Olá. Vim pelo site, pela página sobre usucapião.", "", "Nome: " + nome.value.trim()];
+        perguntas.forEach(function(p){ linhas.push(p.rotulo + ": " + p.el.value); });
+
+        var url = "https://wa.me/" + ((window.NCM_CONFIG && window.NCM_CONFIG.whatsapp) || "5511910144241") +
+          "?text=" + encodeURIComponent(linhas.join("\n"));
+        if(aba && !aba.closed){ aba.location.href = url; } else { window.location.href = url; }
+      }
+
+      // Falha de rede nunca pode segurar o lead: solta o usuário de qualquer jeito.
+      var seguranca = setTimeout(irParaWhatsApp, 4500);
+      var ctrl = typeof AbortController === "function" ? new AbortController() : null;
+      var expirou = setTimeout(function(){ if(ctrl) ctrl.abort(); }, 3500);
+
+      fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        signal: ctrl ? ctrl.signal : undefined,
+        body: JSON.stringify({
+          origem: "lp-usucapiao",
+          tipo: "usucapiao",
+          nome: nome.value.trim(),
+          telefone: digitos,
+          triagem: triagem,
+          atribuicao: typeof window.ncmObterAtribuicao === "function" ? window.ncmObterAtribuicao() : {},
+          consentimento: typeof window.ncmLerConsentimento === "function" ? window.ncmLerConsentimento() : {},
+          pagina: window.location.pathname,
+          enviado_em: new Date().toISOString(),
+          site: hp.value || ""
+        })
+      }).then(function(r){
+        return r.ok ? r.json() : null;
+      })["catch"](function(){
+        return null;
+      }).then(function(){
+        clearTimeout(expirou);
+        clearTimeout(seguranca);
+        converter();
+        irParaWhatsApp();
+      });
+    });
+  }
+
+  function init(){ initReveal(); initFaq(); initSticky(); initWaTracking(); initForm(); onScroll(); }
+  window.addEventListener("scroll", onScroll, { passive:true });
+  if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); }
+  else { init(); }
+})();
+</script>
+</body>
+</html>
