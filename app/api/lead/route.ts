@@ -15,10 +15,6 @@ function obterIp(req: Request): string {
   return req.headers.get('x-real-ip') ?? 'desconhecido';
 }
 
-function protocoloFalso(): string {
-  return `TESTE-${Math.random().toString(36).slice(2, 10).toUpperCase()}`;
-}
-
 export async function POST(req: Request) {
   const ip = obterIp(req);
 
@@ -38,9 +34,10 @@ export async function POST(req: Request) {
   }
   const lead = resultado.data;
 
-  // Honeypot: não avisa o robô, apenas finge sucesso sem gravar.
+  // Honeypot: não avisa o robô (200), mas sem protocolo — os formulários só
+  // disparam conversão quando há protocolo, que é a prova de que o Lexia gravou.
   if (lead.site && lead.site.trim() !== '') {
-    return NextResponse.json({ protocolo: protocoloFalso() });
+    return NextResponse.json({ protocolo: null });
   }
 
   if (excedeuLimite(ip)) {
