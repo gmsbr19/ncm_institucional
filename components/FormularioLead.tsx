@@ -137,8 +137,13 @@ export default function FormularioLead({ origem, titulo, triagem, mensagemIntro 
       });
       clearTimeout(timeoutRequisicao);
 
-      if (resposta.ok && GADS_CONVERSION && typeof window.gtag === 'function') {
-        window.gtag('event', 'conversion', { send_to: GADS_CONVERSION });
+      // Só conta conversão quando o Lexia confirmou que gravou o lead: a rota
+      // responde 200 mesmo quando o repasse falha, mas aí o protocolo vem null.
+      // O protocolo vira transaction_id — o Google descarta reenvio do mesmo.
+      const dados = resposta.ok ? ((await resposta.json()) as { protocolo?: string | null }) : null;
+      const protocolo = dados?.protocolo ?? null;
+      if (protocolo && GADS_CONVERSION && typeof window.gtag === 'function') {
+        window.gtag('event', 'conversion', { send_to: GADS_CONVERSION, transaction_id: protocolo });
       }
     } catch {
       // Falha de rede não impede o WhatsApp de abrir — nunca se perde um lead.
