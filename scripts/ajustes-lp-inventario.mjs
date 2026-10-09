@@ -76,11 +76,16 @@ const HANDLER_NOVO = `var triagem = {
       return r.ok ? r.json() : null;
     })["catch"](function () {
       return null;
-    }).then(function () {
+    }).then(function (dados) {
       clearTimeout(expirou);
       clearTimeout(seguranca);
-      if (CONFIG.conversionSendTo && typeof window.gtag === "function") {
-        window.gtag("event", "conversion", { send_to: CONFIG.conversionSendTo });
+      // Só conta conversão quando o Lexia confirmou que gravou o lead (há
+      // protocolo). Falha de rede, timeout ou Lexia fora do ar: abre o
+      // WhatsApp do mesmo jeito, mas não infla a conversão. O protocolo vira
+      // transaction_id, então um reenvio não conta duas vezes.
+      var protocolo = dados && dados.protocolo;
+      if (protocolo && CONFIG.conversionSendTo && typeof window.gtag === "function") {
+        window.gtag("event", "conversion", { send_to: CONFIG.conversionSendTo, transaction_id: protocolo });
       }
       go();
     });`;

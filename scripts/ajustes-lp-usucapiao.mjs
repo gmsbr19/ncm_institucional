@@ -20,20 +20,21 @@
 // Conversão
 // ---------------------------------------------------------------------------
 
-// A página tem dois caminhos de conversão: os seis botões de WhatsApp e o
-// formulário de triagem. Os dois disparam a MESMA ação de conversão, então quem
-// clica no WhatsApp e depois manda o formulário contaria duas vezes. O
-// transaction_id resolve: o Google Ads deduplica conversões da mesma ação com o
-// mesmo id, e aqui ele é um por carregamento de página.
-const HELPER_CONVERSAO = `  // ---------- CONVERSÃO (Google Ads) ----------
-  var CONVERSAO_ID = "usuc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
-
-  function converter(){
+// A conversão do formulário ("NCM Formulario Enviado") só dispara quando o
+// Lexia confirma que gravou o lead — o protocolo devolvido vira transaction_id.
+//
+// O clique nos botões de WhatsApp NÃO dispara esta ação: até out/2026 disparava,
+// e como o id era um por carregamento de página, cada visita que clicava no
+// WhatsApp contava como "formulário". Isso inflou a conversão da campanha de
+// usucapião (~63 "formulários" no Google contra um punhado de leads no Lexia).
+// O clique no WhatsApp agora é medido por uma ação PRÓPRIA, na ncm-tag.js.
+const HELPER_CONVERSAO = `  // ---------- CONVERSÃO (Google Ads) — só formulário gravado ----------
+  function converter(protocolo){
     var CFG = window.NCM_CONFIG || {};
-    if (!CFG.conversionSendTo || typeof window.gtag !== "function") return;
+    if (!protocolo || !CFG.conversionSendTo || typeof window.gtag !== "function") return;
     window.gtag("event", "conversion", {
       send_to: CFG.conversionSendTo,
-      transaction_id: CONVERSAO_ID
+      transaction_id: protocolo
     });
   }
 
@@ -290,10 +291,12 @@ const JS_FORMULARIO = `  // ---------- FORMULÁRIO DE TRIAGEM ----------
         return r.ok ? r.json() : null;
       })["catch"](function(){
         return null;
-      }).then(function(){
+      }).then(function(dados){
         clearTimeout(expirou);
         clearTimeout(seguranca);
-        converter();
+        // Sem protocolo (falha de rede, timeout, Lexia fora): abre o WhatsApp
+        // do mesmo jeito, mas não conta conversão.
+        converter(dados && dados.protocolo);
         irParaWhatsApp();
       });
     });
@@ -418,22 +421,9 @@ export const AJUSTES_LP_USUCAPIAO = [
 
   // ---------------------------------------------------------------- medição
   {
-    porque: 'helper de conversão, compartilhado pelo WhatsApp e pelo formulário',
+    porque: 'helper de conversão do formulário (só com protocolo do Lexia)',
     de: '  // ---------- RASTREAMENTO GTM/GA4 — CLIQUES WHATSAPP POR SEÇÃO ----------',
     para: HELPER_CONVERSAO,
   },
-  {
-    porque: 'conversão do Google Ads no clique do WhatsApp',
-    de: `          page_service: "Usucapiao"
-        });
-      });`,
-    para: `          page_service: "Usucapiao"
-        });
-
-        // Vale como conversão junto com o formulário: a maioria dos visitantes
-        // vai pelo botão e nunca chega a preencher nada. O transaction_id
-        // impede que quem faz as duas coisas conte duas vezes.
-        converter();
-      });`,
-  },
+  // O clique no WhatsApp é medido pela ncm-tag.js, com ação de conversão própria.
 ];
