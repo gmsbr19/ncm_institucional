@@ -87,11 +87,10 @@
   var contas = [];
   if (CONFIG.gadsTag) contas.push(CONFIG.gadsTag);
 
-  var contaDaConversao = CONFIG.conversionSendTo
-    ? String(CONFIG.conversionSendTo).split('/')[0]
-    : '';
-  if (contaDaConversao && contas.indexOf(contaDaConversao) === -1) {
-    contas.push(contaDaConversao);
+  var acoes = [CONFIG.conversionSendTo, CONFIG.whatsappConversionSendTo];
+  for (var a = 0; a < acoes.length; a++) {
+    var conta = acoes[a] ? String(acoes[a]).split('/')[0] : '';
+    if (conta && contas.indexOf(conta) === -1) contas.push(conta);
   }
 
   if (contas.length > 0) {
@@ -168,6 +167,26 @@
       return {};
     }
   };
+
+  // --------------------------------------------------------- Clique no WhatsApp
+
+  // Ação de conversão PRÓPRIA (não a do formulário): clique no botão não é lead
+  // gravado. Por delegação no document, cobre qualquer link de WhatsApp da
+  // página — inclusive os renderizados depois do carregamento. O formulário não
+  // passa por aqui: ele abre o WhatsApp por window.open/location, não por link.
+  // Um id por carregamento de página: vários cliques na mesma visita contam 1.
+  var WHATSAPP_ID = 'wa-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
+  document.addEventListener('click', function (e) {
+    if (!CONFIG.whatsappConversionSendTo) return;
+    var link = e.target.closest && e.target.closest('a[href*="wa.me"], a[href*="api.whatsapp.com"]');
+    if (!link) return;
+    gtag('event', 'conversion', {
+      send_to: CONFIG.whatsappConversionSendTo,
+      value: 1.0,
+      currency: 'BRL',
+      transaction_id: WHATSAPP_ID,
+    });
+  });
 
   // ------------------------------------------------------------------ Aviso de cookies
 

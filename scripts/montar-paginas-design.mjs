@@ -141,6 +141,8 @@ function injetarTag(html) {
   const config = {
     gadsTag: process.env.NEXT_PUBLIC_GADS_TAG ?? '',
     conversionSendTo: process.env.NEXT_PUBLIC_GADS_CONVERSION || null,
+    // Ação separada para clique no WhatsApp (disparada pela ncm-tag.js).
+    whatsappConversionSendTo: process.env.NEXT_PUBLIC_GADS_WHATSAPP_CONVERSION || null,
     // Usado pelo formulário da LP, para o número não ficar fixo no arquivo.
     whatsapp: process.env.NEXT_PUBLIC_WHATSAPP ?? '',
   };
@@ -152,6 +154,9 @@ function injetarTag(html) {
     console.warn('  AVISO: NEXT_PUBLIC_GADS_CONVERSION vazio — o formulário não dispara conversão.');
   } else {
     console.log(`  conversão: ${config.conversionSendTo}`);
+  }
+  if (!config.whatsappConversionSendTo) {
+    console.warn('  AVISO: NEXT_PUBLIC_GADS_WHATSAPP_CONVERSION vazio — clique no WhatsApp não é medido.');
   }
 
   const tag =

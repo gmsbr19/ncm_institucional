@@ -4,6 +4,7 @@ import { Poppins, Newsreader } from 'next/font/google';
 import './globals.css';
 import AvisoCookies from '@/components/AvisoCookies';
 import CapturaAtribuicao from '@/components/CapturaAtribuicao';
+import RastreioWhatsApp from '@/components/RastreioWhatsApp';
 import { ESCRITORIO, GADS_CONTAS, SITE_URL } from '@/lib/config';
 
 const poppins = Poppins({
@@ -120,6 +121,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <CapturaAtribuicao />
+        <RastreioWhatsApp />
         {children}
         <AvisoCookies />
       </body>
