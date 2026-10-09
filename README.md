@@ -69,9 +69,12 @@ npm run dev
   `scripts/ajustes-lp-usucapiao.mjs`: acrescentar ou tirar uma é mexer só nessa lista, porque a
   validação e a mensagem do WhatsApp saem dela.
 
-  Como a página tem dois caminhos de conversão — os seis botões de WhatsApp e o formulário — os
-  dois disparam a mesma ação do Google Ads com um `transaction_id` por carregamento de página.
-  Sem isso, quem clicasse no botão e depois mandasse o formulário contaria duas conversões.
+  Medição (revisada em out/2026): o formulário dispara a ação "NCM Formulario Enviado" **só quando
+  o Lexia devolve protocolo** (lead gravado), com o protocolo como `transaction_id`. Clique em link
+  de WhatsApp dispara uma ação **separada** (`NEXT_PUBLIC_GADS_WHATSAPP_CONVERSION`), pela
+  `public/assets/ncm-tag.js` nas páginas estáticas e pelo `components/RastreioWhatsApp.tsx` nas do
+  Next — essa ação deve ficar como **secundária** no Google Ads. Antes, o clique no WhatsApp contava
+  como formulário e inflava a conversão da campanha de usucapião.
 - `next.config.ts` — sem `output: 'export'`; mapa de redirects 301 com 7 entradas, conferidas
   contra o sitemap real do WordPress.
 - `sitemap.ts`, `robots.ts`, JSON-LD `LegalService` no layout, `Article`+`BreadcrumbList` nos
@@ -225,6 +228,7 @@ LEXIA_SECRET=<mesmo valor do lexia>
 NEXT_PUBLIC_SITE_URL=https://ncm.adv.br
 NEXT_PUBLIC_GADS_TAG=AW-18397512561
 NEXT_PUBLIC_GADS_CONVERSION=
+NEXT_PUBLIC_GADS_WHATSAPP_CONVERSION=AW-18397512561/s3VVCPz7_pYdEPGGz8RE
 NEXT_PUBLIC_WHATSAPP=5511910144241
 ```
 
