@@ -39,7 +39,7 @@
   details summary:hover{opacity:.75}
 </style>
 
-<script>window.NCM_CONFIG={"gadsTag":"AW-18397512561","conversionSendTo":"AW-18397512561/-YUXCL_TneccEPGGz8RE","whatsapp":"5511910144241"};</script>
+<script>window.NCM_CONFIG={"gadsTag":"AW-18397512561","conversionSendTo":"AW-18397512561/-YUXCL_TneccEPGGz8RE","whatsappConversionSendTo":"AW-18397512561/s3VVCPz7_pYdEPGGz8RE","whatsapp":"5511910144241"};</script>
 <script src="/assets/ncm-tag.js"></script>
 <link rel="canonical" href="https://ncm.adv.br/inventario">
 </head>
@@ -606,11 +606,16 @@ var CONFIG = {
       return r.ok ? r.json() : null;
     })["catch"](function () {
       return null;
-    }).then(function () {
+    }).then(function (dados) {
       clearTimeout(expirou);
       clearTimeout(seguranca);
-      if (CONFIG.conversionSendTo && typeof window.gtag === "function") {
-        window.gtag("event", "conversion", { send_to: CONFIG.conversionSendTo });
+      // Só conta conversão quando o Lexia confirmou que gravou o lead (há
+      // protocolo). Falha de rede, timeout ou Lexia fora do ar: abre o
+      // WhatsApp do mesmo jeito, mas não infla a conversão. O protocolo vira
+      // transaction_id, então um reenvio não conta duas vezes.
+      var protocolo = dados && dados.protocolo;
+      if (protocolo && CONFIG.conversionSendTo && typeof window.gtag === "function") {
+        window.gtag("event", "conversion", { send_to: CONFIG.conversionSendTo, transaction_id: protocolo });
       }
       go();
     });

@@ -361,7 +361,7 @@ section[id], header[id], footer[id] { scroll-margin-top: 76px; }
 .form-privacidade a { color: var(--muted); text-decoration: underline; }
 </style>
 <noscript><style>.reveal { opacity: 1; transform: none; }</style></noscript>
-<script>window.NCM_CONFIG={"gadsTag":"AW-18397512561","conversionSendTo":"AW-18397512561/-YUXCL_TneccEPGGz8RE","whatsapp":"5511910144241"};</script>
+<script>window.NCM_CONFIG={"gadsTag":"AW-18397512561","conversionSendTo":"AW-18397512561/-YUXCL_TneccEPGGz8RE","whatsappConversionSendTo":"AW-18397512561/s3VVCPz7_pYdEPGGz8RE","whatsapp":"5511910144241"};</script>
 <script src="/assets/ncm-tag.js"></script>
 <link rel="canonical" href="https://ncm.adv.br/usucapiao">
 </head>
@@ -870,15 +870,13 @@ atendimento.</p>
 
 <script>
 (function(){
-  // ---------- CONVERSÃO (Google Ads) ----------
-  var CONVERSAO_ID = "usuc-" + Date.now() + "-" + Math.random().toString(36).slice(2, 8);
-
-  function converter(){
+  // ---------- CONVERSÃO (Google Ads) — só formulário gravado ----------
+  function converter(protocolo){
     var CFG = window.NCM_CONFIG || {};
-    if (!CFG.conversionSendTo || typeof window.gtag !== "function") return;
+    if (!protocolo || !CFG.conversionSendTo || typeof window.gtag !== "function") return;
     window.gtag("event", "conversion", {
       send_to: CFG.conversionSendTo,
-      transaction_id: CONVERSAO_ID
+      transaction_id: protocolo
     });
   }
 
@@ -907,11 +905,6 @@ atendimento.</p>
           cta_location: ctaLocation(a),
           page_service: "Usucapiao"
         });
-
-        // Vale como conversão junto com o formulário: a maioria dos visitantes
-        // vai pelo botão e nunca chega a preencher nada. O transaction_id
-        // impede que quem faz as duas coisas conte duas vezes.
-        converter();
       });
     });
   }
@@ -1062,10 +1055,12 @@ atendimento.</p>
         return r.ok ? r.json() : null;
       })["catch"](function(){
         return null;
-      }).then(function(){
+      }).then(function(dados){
         clearTimeout(expirou);
         clearTimeout(seguranca);
-        converter();
+        // Sem protocolo (falha de rede, timeout, Lexia fora): abre o WhatsApp
+        // do mesmo jeito, mas não conta conversão.
+        converter(dados && dados.protocolo);
         irParaWhatsApp();
       });
     });
