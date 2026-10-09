@@ -2,6 +2,13 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://ncm.adv.br'
 export const WHATSAPP_NUMERO = process.env.NEXT_PUBLIC_WHATSAPP ?? '5511910144241';
 export const GADS_TAG = process.env.NEXT_PUBLIC_GADS_TAG ?? '';
 export const GADS_CONVERSION = process.env.NEXT_PUBLIC_GADS_CONVERSION || null;
+/**
+ * Ação de conversão SEPARADA para clique no WhatsApp. Não pode ser a mesma do
+ * formulário: clique no botão não é lead gravado, e misturar os dois inflava a
+ * conversão "NCM Formulario Enviado". No Google Ads, esta ação deve ficar como
+ * SECUNDÁRIA, para não orientar os lances.
+ */
+export const GADS_WHATSAPP_CONVERSION = process.env.NEXT_PUBLIC_GADS_WHATSAPP_CONVERSION || null;
 
 /**
  * Contas do Google Ads a carregar via gtag('config', ...).
@@ -16,8 +23,10 @@ export const GADS_CONTAS: string[] = (() => {
   const contas: string[] = [];
   if (GADS_TAG) contas.push(GADS_TAG);
 
-  const contaDaConversao = GADS_CONVERSION ? GADS_CONVERSION.split('/')[0] : '';
-  if (contaDaConversao && !contas.includes(contaDaConversao)) contas.push(contaDaConversao);
+  for (const acao of [GADS_CONVERSION, GADS_WHATSAPP_CONVERSION]) {
+    const conta = acao ? acao.split('/')[0] : '';
+    if (conta && !contas.includes(conta)) contas.push(conta);
+  }
 
   return contas;
 })();
